@@ -1,6 +1,30 @@
  var socket = io();
 
-    // on connection to server, ask for user's name with an anonymous callback
+ // on connection to server, ask for user's name with an anonymous callback
+  socket.on('connect', function(){
+		// call the server-side function 'adduser' and send one parameter (value of prompt)
+		alert("You are connected");
+	});
+
+function showCreateRoom() {
+	$("#createRoomContainer").toggle();
+}
+
+function showJoinRoom() {
+	$("#joinRoomContainer").toggle();
+}
+
+function createRoom() {
+	var roomName = $("#createRoomName").val();
+	socket.emit("createRoom", roomName);
+}
+
+function joinRoom() {
+	var roomName = $("#joinRoomName").val();
+	socket.emit("joinRoom", roomName);
+}
+
+  /*  // on connection to server, ask for user's name with an anonymous callback
    socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
 		socket.emit('adduser', prompt("What's your name?"));
@@ -45,4 +69,4 @@
 				$('#datasend').focus().click();
 			}
 		});
-	});
+	});*/
