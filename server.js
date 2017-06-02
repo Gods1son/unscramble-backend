@@ -24,7 +24,7 @@ var rooms = ['room1','room2','room3'];
 io.sockets.on('connection', function (socket) {
 
 	// when the client emits 'adduser', this listens and executes
-	socket.on('adduser', function(username){
+	/*socket.on('adduser', function(username){
 		// store the username in the socket session for this client
 		socket.username = username;
 		// store the room name in the socket session for this client
@@ -37,7 +37,7 @@ io.sockets.on('connection', function (socket) {
 		socket.emit('updatechat', 'SERVER', 'you have connected to room1');
 		// echo to room 1 that a person has connected to their room
 		socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
-		socket.emit('updaterooms', rooms, 'room1');
+		socket.emit('updaterooms', rooms, 'room1');*/
 	});
 
 	// when the client emits 'sendchat', this listens and executes
@@ -59,16 +59,26 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' has joined this room');
 		socket.emit('updaterooms', rooms, newroom);
 	});
+	
+	socket.on('createRoom',function(roomName){
+		socket.join(roomName);
+		socket.emit('roomCreated',roomName + 'room has been created')
+	})
+
+	socket.on('joinRoom',function(roomName){
+		socket.join(roomName);
+		socket.emit('roomJoined',roomName + 'room has been joined')
+	})
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
 		// remove the username from global usernames list
-		delete usernames[socket.username];
+		/*delete usernames[socket.username];
 		// update list of users in chat, client-side
 		io.sockets.emit('updateusers', usernames);
 		// echo globally that this client has left
 		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
-		socket.leave(socket.room);
+		socket.leave(socket.room); */
 	});
 });
 
