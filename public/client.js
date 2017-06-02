@@ -14,7 +14,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(room){
-	document.getElementById("wordsNew").innerHTML += room;
+	document.getElementById("wordsNew").innerHTML += "<br>" + room;
 })
 
 function showCreateRoom() {
