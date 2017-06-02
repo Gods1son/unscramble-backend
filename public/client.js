@@ -37,13 +37,46 @@ function joinRoom() {
 
 function sendWord(){
 	var word = $("#wordToShuffle").val();
-	socket.emit("sendShuffledWord", word);
+	var shuffledWord = shuffleman(word);
+	socket.emit("sendShuffledWord", shuffledWord);
 }
 
 function sendGuess(){
 	var word = $("#myGuess").val();
-	socket.emit("sendMyGuess", roomName);
+	//var shuffledWord = shuffleman(word);
+	socket.emit("sendMyGuess", word);
 }
+function shuffleman(word) {
+	var newword;
+	var shuffleword = word;
+	var allnumbers = [];
+	var wordsplit = shuffleword.split("");
+
+    do{
+        
+      //  var shufflenumber = document.getElementById("shufflenumber");
+               
+        var randomnumber = Math.floor(Math.random() * shuffleword.length);
+            
+        if(allnumbers.indexOf(randomnumber) != -1){
+        	var randomnumber = Math.floor(Math.random() * shuffleword.length);
+        }else{
+        	allnumbers.push(randomnumber);
+        }
+               
+    }while(allnumbers.length != shuffleword.length);
+       for (var x = 0; x < allnumbers.length; x++) {
+       	var position = allnumbers[x];
+    	 newword = wordsplit[position];
+    	//document.getElementById("numbers").innerHTML += newword;
+	    
+    }
+    //set the real word empty
+   // document.getElementById("shuffleword").value = "";
+
+    //save word to localstorage
+	  return newword;
+   }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
    socket.on('connect', function(){
