@@ -6,6 +6,7 @@
 		alert("You are connected");
 	});
 
+
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
 }
