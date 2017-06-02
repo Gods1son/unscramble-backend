@@ -13,6 +13,10 @@ socket.on('roomJoined', function(room){
 	alert(room);
 })
 
+socket.on('newWord', function(room){
+	alert(room);
+})
+
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
 }
@@ -29,6 +33,16 @@ function createRoom() {
 function joinRoom() {
 	var roomName = $("#joinRoomName").val();
 	socket.emit("joinRoom", roomName);
+}
+
+function sendWord(){
+	var word = $("#wordToShuffle").val();
+	socket.emit("sendShuffledWord", word);
+}
+
+function sendGuess(){
+	var word = $("#myGuess").val();
+	socket.emit("sendMyGuess", roomName);
 }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
