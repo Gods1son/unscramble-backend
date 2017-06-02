@@ -3,16 +3,89 @@
       <title> Real Time Chat </title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="stylesheet" href="style.css" />
+	    <style>
+	#menuBar{
+		background-color:Aqua;
+		height:30px;
+		width:auto;
+		padding-top:10px;
+		padding-left:10px;
+		}
+	
+	#createRoomContainer {
+		border:2px solid navy;
+		margin:10px auto;
+		padding:10px;
+		display:none;
+		}
+
+	#joinRoomContainer {
+		margin:10px auto;
+		border:2px solid blue;
+		padding:10px;
+		display:none;
+		}
+		
+	#roomUsers {
+		margin:10px 0;
+		border:2px solid gold;
+		padding:10px;
+		width:250px;
+		float:left;
+		height:150px;
+		}
+	
+	#enterWord {
+		margin:10px 0 10px 5px;
+		border:2px solid yellow;
+		padding:10px;
+		width:300px;
+		float:left;
+		height:150px;
+		}
+		
+	#allWords {
+		margin:10px 0 10px 5px;
+		border:2px solid wheat;
+		padding:10px;
+		width:300px;
+		float:left;
+		}
+</style>
     </head>
     <body>
-    <div style="float:left;width:100px;border-right:1px solid black;height:300px;padding:10px;overflow:scroll-y;">
-	<b>ROOMS</b>
-	<div id="rooms"></div>
+   <h2 style="text-align:center;">Welcome to online shuffling game</h2>
+<div id="menuBar">
+<input type="button" value="Create New Room" id="createRoom" onclick="showCreateRoom()"/>
+<input type="button" value="Join Room" id="joinRoom" onclick="showJoinRoom()"/>
 </div>
-<div style="float:left;width:300px;height:250px;overflow:scroll-y;padding:10px;">
-	<div id="conversation"></div>
-	<input id="data" style="width:200px;" />
-	<input type="button" id="datasend" value="send" />
+
+<div id="createRoomContainer">
+<b>Create Room</b><br>
+Enter Room Name: <input type="text" id="createRoomName"> <input type="button" value="Create Room" id="createRoomAction" onclick="createRoom()">
+</div>
+
+<div id="joinRoomContainer">
+<b>Join Room</b><br>
+Enter Room Name: <input type="text" id="joinRoomName"> <input type="button" value="Join Room" id="joinRoomAction" onclick="joinRoom()">
+</div>
+
+<div id="roomUsers">
+<span style="-webkit-margin-start:4.2em;"><b>People in Room</b></span>
+
+</div>
+
+<div id="enterWord">
+<br>
+<span><b>Send Word</b></span><br>
+<input type="text" placeholder="Word to shuffle" id="wordToShuffle"><input type="button" value="Shuffle & Send" id="shuffleSend" class="sendButton"><br><br>
+
+<span><b>Guess Word</b></span><br>
+<input type="text" placeholder="Guess Word" id="myGuess"><input type="button" value="Guess Word" id="checkGuess" class="sendButton">
+</div>
+
+<div id="allWords">
+<span><b>All the words come here</b></span><br>
 </div>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
