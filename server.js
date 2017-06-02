@@ -63,13 +63,13 @@ io.sockets.on('connection', function (socket) {
 	socket.on('createRoom',function(roomName){
 		socket.join(roomName);
 		roomName2 = roomName;
-		socket.emit('roomCreated',roomName + 'room has been created')
+		socket.emit('roomCreated',roomName + ' room has been created')
 	})
 
 	socket.on('joinRoom',function(roomName){
 		socket.join(roomName);
 		roomName2 = roomName;
-		socket.emit('roomJoined',roomName + 'room has been joined')
+		socket.emit('roomJoined',roomName + ' room has been joined')
 	})
 	
 	socket.on('sendShuffledWord',function(newWord){
