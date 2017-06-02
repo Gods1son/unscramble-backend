@@ -48,7 +48,7 @@ function sendGuess(){
 }
 function shuffleman(word) {
 	var newword;
-	var newwordform;
+	var newwordform = "";
 	var shuffleword = word;
 	var allnumbers = [];
 	var wordsplit = shuffleword.split("");
