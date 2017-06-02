@@ -5,7 +5,13 @@
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
 		alert("You are connected");
 	});
+socket.on('roomCreated', function(room){
+	alert("You have created the room " + room);
+})
 
+socket.on('roomJoined', function(room){
+	alert("You have joined the room " + room);
+})
 
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
