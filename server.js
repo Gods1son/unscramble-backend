@@ -20,7 +20,7 @@ var usernames = {};
 
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
-
+var roomName2;
 io.sockets.on('connection', function (socket) {
 
 	// when the client emits 'adduser', this listens and executes
@@ -62,12 +62,22 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('createRoom',function(roomName){
 		socket.join(roomName);
+		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + 'room has been created')
 	})
 
 	socket.on('joinRoom',function(roomName){
 		socket.join(roomName);
+		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + 'room has been joined')
+	})
+	
+	socket.on('sendShuffledWord',function(newWord){
+		socket.broadcast.to(roomName2).emit('newWord', newWord);
+	})
+	
+	socket.on('sendMyGuess',function(newWord){
+		socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 
 	// when the user disconnects.. perform this
