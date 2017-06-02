@@ -37,12 +37,14 @@ function joinRoom() {
 
 function sendWord(){
 	var word = $("#wordToShuffle").val();
+	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord);
 }
 
 function sendGuess(){
 	var word = $("#myGuess").val();
+	document.getElementById("myGuess").value = "";
 	//var shuffledWord = shuffleman(word);
 	socket.emit("sendMyGuess", word);
 }
