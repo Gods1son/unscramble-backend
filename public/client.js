@@ -48,6 +48,7 @@ function sendGuess(){
 }
 function shuffleman(word) {
 	var newword;
+	var newwordform
 	var shuffleword = word;
 	var allnumbers = [];
 	var wordsplit = shuffleword.split("");
@@ -68,14 +69,14 @@ function shuffleman(word) {
        for (var x = 0; x < allnumbers.length; x++) {
        	var position = allnumbers[x];
     	 newword = wordsplit[position];
-    	//document.getElementById("numbers").innerHTML += newword;
+    	newwordform += newword;
 	    
     }
     //set the real word empty
    // document.getElementById("shuffleword").value = "";
 
     //save word to localstorage
-	  return newword;
+	  return newwordform;
    }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
