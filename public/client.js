@@ -1,6 +1,6 @@
-var roomName; 
+
 var socket = io();
- 
+var roomName;  
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
@@ -41,7 +41,7 @@ socket.on('newWord', function(word, room){
 
 socket.on('newWord2', function(word){
 	document.getElementById("wordsNew").innerHTML += "<br>" + word;
-}
+})
 
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
