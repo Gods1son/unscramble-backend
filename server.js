@@ -78,13 +78,13 @@ io.sockets.on('connection', function (socket) {
 	})
 	
 	socket.on('sendShuffledWord',function(newWord){
-		socket.emit('newWord', newWord);
+		//socket.emit('newWord', newWord);
 		io.sockets.in(socket.room).emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
 	socket.on('sendMyGuess',function(newWord){
-		socket.emit('newWord', newWord);
+		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 		io.sockets.in(socket.room).emit('newWord', newWord);
 	})
