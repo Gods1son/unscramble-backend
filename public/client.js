@@ -67,6 +67,7 @@ function joinRoom() {
 
 function sendWord(){
 	var word = $("#wordToShuffle").val();
+	word = word.toLowerCase();
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
@@ -74,6 +75,7 @@ function sendWord(){
 
 function sendGuess(){
 	var word = $("#myGuess").val();
+	word = word.toLowerCase();
 	document.getElementById("myGuess").value = "";
 	if (localStorage.getItem(roomName) == undefined) {
    		alert("no word to guess");
