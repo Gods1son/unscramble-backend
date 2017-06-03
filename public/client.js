@@ -76,10 +76,10 @@ function sendGuess(){
 	}else{
 	var word2guess = localStorage.getItem(roomName);
    		if (word == word2guess) {
-   			word = word + " correct answer";
+   			word = word + " CORRECT";
    			localStorage.removeItem(roomName);
    		} else {
-   			word = word + " incorrect answer";
+   			word = word + " INCORRECT";
    		}
 
 	}
