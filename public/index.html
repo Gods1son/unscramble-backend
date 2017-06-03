@@ -32,7 +32,7 @@
 		padding:10px;
 		width:250px;
 		float:left;
-		height:150px;
+		height:250px;
 		overflow:scroll;
 		}
 	
@@ -42,7 +42,7 @@
 		padding:10px;
 		width:300px;
 		float:left;
-		height:150px;
+		height:250px;
 		}
 		
 	#allWords {
@@ -56,7 +56,6 @@
 		}
 	#wordsNew{
 		 line-height:1.6em;
-		 margin-top:-8px;
 		 }
 </style>
     </head>
@@ -89,6 +88,9 @@ Enter Room Name: <input type="text" id="joinRoomName"> <input type="button" valu
 
 <span><b>Guess Word</b></span><br>
 <input type="text" placeholder="Guess Word" id="myGuess"><input type="button" value="Guess Word" id="checkGuess" onclick="sendGuess()" class="sendButton">
+	
+<span><b>Give Hint (if u want!)</b></span><br>
+<input type="text" placeholder="Give Hint" id="myHint"><input type="button" value="Give Hint" id="provideHint" onclick="giveHint()" class="sendButton">
 </div>
 
 <div id="allWords">
