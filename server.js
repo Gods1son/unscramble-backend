@@ -39,7 +39,11 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.to('room1').emit('updatechat', 'SERVER', username + ' has connected to this room');
 		socket.emit('updaterooms', rooms, 'room1');
 	});*/
-
+	//creating userName
+	socket.on('pickUsername', function (username) {
+		socket.username = username;
+		usernames[username] = username;	
+	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
@@ -67,6 +71,7 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
+		io.sockets.in(socket.room).emit('allUsers', usernames);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -74,7 +79,8 @@ io.sockets.on('connection', function (socket) {
 		socket.room = roomName;
 		socket.join(roomName);
 		roomName2 = roomName;
-		socket.emit('roomJoined',roomName + ' room has been joined')
+		socket.emit('roomJoined',roomName + ' room has been joined');
+		io.sockets.in(socket.room).emit('allUsers', usernames);
 	})
 	
 	socket.on('sendShuffledWord',function(newWord){
