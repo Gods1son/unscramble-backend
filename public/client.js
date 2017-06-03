@@ -9,6 +9,10 @@ socket.on('roomCreated', function(room){
 	alert(room);
 })
 
+socket.on('roomCreatedError', function(notice){
+	alert(notice);
+})
+
 socket.on('roomJoined', function(room){
 	alert(room);
 })
