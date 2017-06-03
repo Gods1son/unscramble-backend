@@ -102,7 +102,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('sendMyGuess',function(newWord){
 		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord2', newWord);
+		io.sockets.in(socket.room).emit('newWord2',socket.username + " -- " + newWord);
 	})
 
 	// when the user disconnects.. perform this
