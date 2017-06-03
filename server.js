@@ -93,9 +93,9 @@ io.sockets.on('connection', function (socket) {
 		
 	})
 	
-	socket.on('sendShuffledWord',function(newWord){
+	socket.on('sendShuffledWord',function(newWord, originalWord){
 		//socket.emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord', newWord, socket.room);
+		io.sockets.in(socket.room).emit('newWord', newWord, socket.room, originalWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
