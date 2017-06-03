@@ -82,10 +82,10 @@ function sendGuess(){
 	}else{
 	var word2guess = localStorage.getItem(roomName);
    		if (word == word2guess) {
-   			word = word + " " + "<img src='checkmark-png-22.png' height='40' width='40'>";
+   			word = word + " " + "<img src='checkmark-png-22.png' height='30' width='30'>";
    			localStorage.removeItem(roomName);
    		} else {
-   			word = word + " " + "<img src='cross.png' height='40' width='40'>";
+   			word = word + " " + "<img src='cross.png' height='30' width='30'>";
    		}
 	}
 	//var shuffledWord = shuffleman(word);	
