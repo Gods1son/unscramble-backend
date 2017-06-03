@@ -22,7 +22,7 @@ var usernamesList = {};
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-
+		socket.allUsers = [];
 	// when the client emits 'adduser', this listens and executes
 	/*socket.on('adduser', function(username){
 		// store the username in the socket session for this client
@@ -71,10 +71,11 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
-		usernamesList[socket.room][socket.username] = socket.username;
+		//usernamesList[socket.room][socket.username] = socket.username;
 		//usernamesList.roomName.(socket.username) = (socket.username);
-		socket.emit('allUsers', usernamesList[roomName]);
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
+		socket.allUsers.push(socket.username);
+		//socket.emit('allUsers', socket.allUsers);
+		io.sockets.in(socket.room).emit('allUsers', socket.allUsers);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -83,8 +84,9 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
-		usernamesList[socket.room][socket.username] = socket.username;
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
+		//usernamesList[socket.room][socket.username] = socket.username;
+		socket.allUsers.push(socket.username);
+		io.sockets.in(socket.room).emit('allUsers', socket.allUsers);
 		
 	})
 	
