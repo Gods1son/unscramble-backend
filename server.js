@@ -16,7 +16,7 @@ server.listen(port);
 
   app.use(express.static('public'));
 
-var usernames = {};
+var usernamesList = {};
 
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket) {
 	//creating userName
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
-		usernames[username] = username;	
+		//usernames[username] = username;	
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
@@ -71,7 +71,8 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
-		io.sockets.in(socket.room).emit('allUsers', usernames);
+		usernamesList[roomName][socket.username] = socket.username;
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[roomName]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -80,7 +81,9 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
-		io.sockets.in(socket.room).emit('allUsers', usernames);
+		usernamesList[roomName][socket.username] = socket.username;
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[roomName]);
+		
 	})
 	
 	socket.on('sendShuffledWord',function(newWord){
