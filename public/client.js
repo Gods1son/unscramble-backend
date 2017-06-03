@@ -14,7 +14,7 @@ socket.on('roomCreatedError', function(notice){
 })
 
 socket.on('allUsers', function(data){
-	$('#users').empty();
+	//$('#users').empty();
 		/*$.each(data, function(key, value) {
 			$('#users').append('<div>' + value + '</div>');
 		});*/
