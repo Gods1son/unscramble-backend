@@ -34,6 +34,8 @@ socket.on('roomJoined', function(room){
 
 socket.on('newWord', function(word, room, originalWord){
 	document.getElementById("wordsNew").innerHTML += "<br>" + word;
+	 var elem = document.getElementById('allWords');
+  	 elem.scrollTop = elem.scrollHeight;
 	roomName = room;
 	if (localStorage.getItem(room) == undefined) {
     	localStorage.setItem(room, originalWord);
@@ -45,10 +47,14 @@ socket.on('newWord', function(word, room, originalWord){
 
 socket.on('newWord2', function(word){
 	document.getElementById("wordsNew").innerHTML += "<br>" + word;
+	var elem = document.getElementById('allWords');
+  	elem.scrollTop = elem.scrollHeight;
 })
 
 socket.on('sharedHint', function(hint){
 	document.getElementById("wordsNew").innerHTML += "<br>" + hint;
+	var elem = document.getElementById('allWords');
+  	elem.scrollTop = elem.scrollHeight;
 })
 
 function showCreateRoom() {
