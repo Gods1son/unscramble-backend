@@ -6,6 +6,10 @@ var roomName;
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
 		socket.emit("pickUsername",prompt("Pick a username"));
 	});
+socket.on('disconnectedUser', function(info){
+	alert(info);
+})
+
 socket.on('roomCreated', function(room){
 	alert(room);
 })
