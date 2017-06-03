@@ -85,11 +85,11 @@ function sendGuess(){
    		} else {
    			word = word + " INCORRECT";
    		}
-
 	}
-	//var shuffledWord = shuffleman(word);
+	//var shuffledWord = shuffleman(word);	
 	socket.emit("sendMyGuess", word);
 }
+
 function shuffleman(word) {
 	var newword;
 	var newwordform = "";
