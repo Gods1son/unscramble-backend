@@ -28,14 +28,14 @@ socket.on('roomJoined', function(room){
 	alert(room);
 })
 
-socket.on('newWord', function(word, room){
+socket.on('newWord', function(word, room, originalWord){
 	document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	roomName = room;
 	if (localStorage.getItem(room) == undefined) {
-    	localStorage.setItem(room, word);
+    	localStorage.setItem(room, originalWord);
     } else {
     	localStorage.removeItem(room);
-    	localStorage.setItem(room, word);
+    	localStorage.setItem(room, originalWord);
 	}
 })
 
