@@ -65,7 +65,7 @@ function sendWord(){
 	var word = $("#wordToShuffle").val();
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
-	socket.emit("sendShuffledWord", shuffledWord);
+	socket.emit("sendShuffledWord", shuffledWord, word);
 }
 
 function sendGuess(){
@@ -75,7 +75,7 @@ function sendGuess(){
    		alert("no word to guess");
 	}else{
 	var word2guess = localStorage.getItem(roomName);
-   		if (word == shuffleword2) {
+   		if (word == word2guess) {
    			word = word + " correct answer";
    			localStorage.removeItem(roomName);
    		} else {
