@@ -1,5 +1,6 @@
- var socket = io();
- var roomName;
+var roomName; 
+var socket = io();
+ 
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
