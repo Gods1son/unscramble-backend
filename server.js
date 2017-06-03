@@ -95,14 +95,14 @@ io.sockets.on('connection', function (socket) {
 	
 	socket.on('sendShuffledWord',function(newWord, originalWord){
 		//socket.emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord',socket.username + " -- " + newWord + " QUESTION", socket.room, originalWord);
+		io.sockets.in(socket.room).emit('newWord',socket.username + "'s QUESTION -- " + newWord, socket.room, originalWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
 	socket.on('sendMyGuess',function(newWord){
 		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord2',socket.username + " -- " + newWord);
+		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord);
 	})
 
 	// when the user disconnects.. perform this
