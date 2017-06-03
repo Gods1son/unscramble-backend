@@ -1,5 +1,5 @@
  var socket = io();
-
+ var roomName;
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
@@ -27,8 +27,15 @@ socket.on('roomJoined', function(room){
 	alert(room);
 })
 
-socket.on('newWord', function(room){
-	document.getElementById("wordsNew").innerHTML += "<br>" + room;
+socket.on('newWord', function(word, room){
+	document.getElementById("wordsNew").innerHTML += "<br>" + word;
+	roomName = room;
+	if (localStorage.getItem(room) == undefined) {
+    	localStorage.setItem(room, word);
+    } else {
+    	localStorage.removeItem(room);
+    	localStorage.setItem(room, word);
+	}
 })
 
 function showCreateRoom() {
@@ -59,6 +66,18 @@ function sendWord(){
 function sendGuess(){
 	var word = $("#myGuess").val();
 	document.getElementById("myGuess").value = "";
+	if (localStorage.getItem(roomName) == undefined) {
+   		alert("no word to guess");
+	}else{
+	var word2guess = localStorage.getItem(roomName);
+   		if (word == shuffleword2) {
+   			word = word + " correct answer";
+   			localStorage.removeItem(roomName);
+   		} else {
+   			word = word + " incorrect answer";
+   		}
+
+	}
 	//var shuffledWord = shuffleman(word);
 	socket.emit("sendMyGuess", word);
 }
