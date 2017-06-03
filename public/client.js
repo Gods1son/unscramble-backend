@@ -14,13 +14,13 @@ socket.on('roomCreatedError', function(notice){
 })
 
 socket.on('allUsers', function(data){
-	//$('#users').empty();
+	$('#users').empty();
 		/*$.each(data, function(key, value) {
 			$('#users').append('<div>' + value + '</div>');
 		});*/
-	for(var i = 0; i < data.length; i++){
-		$('#users').append('<div>' + data[i] + '</div>');
-	}
+	
+		$('#users').append('<div>' + data + '</div>');
+	
 })
 
 socket.on('roomJoined', function(room){
