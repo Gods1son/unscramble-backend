@@ -3,7 +3,7 @@
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
-		alert("You are connected");
+		socket.emit("pickUsername",prompt("Pick a username"));
 	});
 socket.on('roomCreated', function(room){
 	alert(room);
@@ -11,6 +11,13 @@ socket.on('roomCreated', function(room){
 
 socket.on('roomCreatedError', function(notice){
 	alert(notice);
+})
+
+socket.on('allUsers', function(data){
+	$('#users').empty();
+		$.each(data, function(key, value) {
+			$('#users').append('<div>' + key + '</div>');
+		});
 })
 
 socket.on('roomJoined', function(room){
