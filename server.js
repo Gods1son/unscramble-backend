@@ -108,7 +108,8 @@ io.sockets.on('connection', function (socket) {
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
 		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room].replace(socket.username, ""));
+		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username, "");	
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		// remove the username from global usernames list
 		/*delete usernames[socket.username];
 		// update list of users in chat, client-side
