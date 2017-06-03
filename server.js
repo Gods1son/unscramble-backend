@@ -61,12 +61,17 @@ io.sockets.on('connection', function (socket) {
 	});
 	
 	socket.on('createRoom',function(roomName){
+		if(rooms.indexOf(roomName) == -1){
+		rooms.push(roomName);
+		socket.room = roomName;
 		socket.join(roomName);
 		roomName2 = roomName;
-		socket.emit('roomCreated',roomName + ' room has been created')
+		socket.emit('roomCreated',roomName + ' room has been created');
+		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
 	socket.on('joinRoom',function(roomName){
+		socket.room = roomName;
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined')
