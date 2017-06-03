@@ -108,6 +108,12 @@ io.sockets.on('connection', function (socket) {
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " " + n);
 	})
+	
+	socket.on('giveHint', function(hint){
+		var d = new Date();
+		var n = d.toLocaleTimeString();
+		io.sockets.in(socket.room).emit('sharedHint',hint + " " + n);
+	})
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
