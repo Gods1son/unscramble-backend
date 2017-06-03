@@ -71,7 +71,7 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
-		usernamesList[roomName] = socket.username;
+		usernamesList[(socket.room)] = socket.username;
 		//usernamesList.roomName.(socket.username) = (socket.username);
 		socket.emit('allUsers', usernamesList[roomName]);
 		io.sockets.in(socket.room).emit('allUsers', usernamesList);
