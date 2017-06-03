@@ -47,6 +47,10 @@ socket.on('newWord2', function(word){
 	document.getElementById("wordsNew").innerHTML += "<br>" + word;
 })
 
+socket.on('sharedHint', function(hint){
+	document.getElementById("wordsNew").innerHTML += "<br>" + hint;
+})
+
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
 }
@@ -63,6 +67,12 @@ function createRoom() {
 function joinRoom() {
 	var roomName = $("#joinRoomName").val();
 	socket.emit("joinRoom", roomName);
+}
+
+function giveHint(){
+	var hint = $("#myHint").val();
+	document.getElementById("myHint").value = "";
+	socket.emit("giveHint", hint);
 }
 
 function sendWord(){
