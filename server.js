@@ -16,13 +16,13 @@ server.listen(port);
 
   app.use(express.static('public'));
 
-var usernamesList = {};
+var usernamesList = [];
 
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-		socket.allUsers = [];
+		//socket.allUsers = [];
 	// when the client emits 'adduser', this listens and executes
 	/*socket.on('adduser', function(username){
 		// store the username in the socket session for this client
@@ -73,9 +73,10 @@ io.sockets.on('connection', function (socket) {
 		socket.emit('roomCreated',roomName + ' room has been created');
 		//usernamesList[socket.room][socket.username] = socket.username;
 		//usernamesList.roomName.(socket.username) = (socket.username);
-		socket.allUsers.push(socket.username);
+		//socket.allUsers.push(socket.username);
 		//socket.emit('allUsers', socket.allUsers);
-		io.sockets.in(socket.room).emit('allUsers', socket.allUsers);
+		usernamesList[socket.room] += socket.username;
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -85,8 +86,9 @@ io.sockets.on('connection', function (socket) {
 		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
 		//usernamesList[socket.room][socket.username] = socket.username;
-		socket.allUsers.push(socket.username);
-		io.sockets.in(socket.room).emit('allUsers', socket.allUsers);
+		//socket.allUsers.push(socket.username);
+		usernamesList[socket.room] += socket.username;
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		
 	})
 	
