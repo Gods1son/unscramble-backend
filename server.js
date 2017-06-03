@@ -71,7 +71,8 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
-		usernamesList[roomName][socket.username] = socket.username;
+		usernamesList[roomName] = {};
+		usernamesList.roomName.(socket.username) = (socket.username);
 		socket.emit('allUsers', usernamesList[roomName]);
 		socket.broadcast.to(socket.room).emit('allUsers', usernamesList[roomName]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
@@ -82,7 +83,7 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
-		usernamesList[roomName][socket.username] = socket.username;
+		usernamesList.roomName.(socket.username) = (socket.username);
 		socket.broadcast.to(socket.room).emit('allUsers', usernamesList[roomName]);
 		
 	})
