@@ -107,6 +107,7 @@ io.sockets.on('connection', function (socket) {
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
+		if(socket.room != undefined || socket.room != null){
 		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
 		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username, "");	
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
@@ -117,6 +118,7 @@ io.sockets.on('connection', function (socket) {
 		// echo globally that this client has left
 		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
 		socket.leave(socket.room); */
+		}
 	});
 });
 
