@@ -54,7 +54,7 @@ socket.on('newWord2', function(word){
 })
 
 socket.on('sharedHint', function(hint){
-	$('#wordsNew').append('<li>' + word + '</li>');
+	$('#wordsNew').append('<li>' + hint + '</li>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + hint;
 	var elem = document.getElementById('allWords');
   	elem.scrollTop = elem.scrollHeight;
