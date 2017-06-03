@@ -109,7 +109,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('disconnect', function(){
 		if(socket.room != undefined || socket.room != null){
 		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
-		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username, "");	
+		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username + "<br>", "");	
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		// remove the username from global usernames list
 		/*delete usernames[socket.username];
