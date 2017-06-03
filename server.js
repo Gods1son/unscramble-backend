@@ -75,6 +75,7 @@ io.sockets.on('connection', function (socket) {
 		//usernamesList.roomName.(socket.username) = (socket.username);
 		//socket.allUsers.push(socket.username);
 		//socket.emit('allUsers', socket.allUsers);
+		usernamesList[socket.room] = "";
 		usernamesList[socket.room] += socket.username;
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
