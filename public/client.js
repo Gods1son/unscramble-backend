@@ -15,8 +15,10 @@ socket.on('roomCreated', function(room){
 })
 
 socket.on('updateScores', function(correct, incorrect){
-	$('#scores').append('<div>' + correct + '</div>' + '<hr>');
-	$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
+	document.getElementById("scores").innerHTML += '<div>' + correct + '</div>' + '<hr>';
+	document.getElementById("scores").innerHTML += '<div>' + incorrect + '</div>' + '<hr>';
+	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
+	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 })
 
 socket.on('roomCreatedError', function(notice){
