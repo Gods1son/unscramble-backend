@@ -49,7 +49,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(word, room, originalWord){
-	$('#wordsNew').append('<li>' + word + '</li>');
+	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	 var elem = document.getElementById('allWords');
   	 elem.scrollTop = elem.scrollHeight;
@@ -63,14 +63,14 @@ socket.on('newWord', function(word, room, originalWord){
 })
 
 socket.on('newWord2', function(word){
-	$('#wordsNew').append('<li>' + word + '</li>');
+	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	var elem = document.getElementById('allWords');
   	elem.scrollTop = elem.scrollHeight;
 })
 
 socket.on('sharedHint', function(hint){
-	$('#wordsNew').append('<li>' + hint + '</li>');
+	$('#wordsNew').append('<li>' + hint + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + hint;
 	var elem = document.getElementById('allWords');
   	elem.scrollTop = elem.scrollHeight;
