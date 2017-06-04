@@ -81,7 +81,7 @@ io.sockets.on('connection', function (socket) {
 		usernamesList[socket.room] = "";
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
-		io.sockets.in(socket.room).emit('startScores',socket.username, socket.scores);
+		io.sockets.in(socket.room).emit('startScores',socket.username,socket.username + " score = " + socket.scores);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -94,7 +94,7 @@ io.sockets.on('connection', function (socket) {
 		//socket.allUsers.push(socket.username);
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		io.sockets.in(socket.room).emit('startScores',socket.username, socket.scores);
+		io.sockets.in(socket.room).emit('startScores',socket.username,socket.username + " score = " + socket.scores);
 		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
 	
@@ -114,11 +114,12 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " " + n);
 		if(result == "pass"){
 		socket.scores += 1;
-		io.sockets.in(socket.room).emit('updateScoresCorrect',socket.username + " correct" + " = " + socket.scores["correct"]);
+		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
+		//io.sockets.in(socket.room).emit('updateScoresCorrect',socket.username + " correct" + " = " + socket.scores["correct"]);
 		}else if(result == "fail"){
 		socket.scores -= 1;
 		//io.sockets.in(socket.room).emit('updateScoresIncorrect',socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
-		io.sockets.in(socket.room).emit('updateScores',socket.username, socket.scores);
+		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 		}
 		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
