@@ -14,16 +14,16 @@ socket.on('roomCreated', function(room){
 	alert(room);
 })
 
-socket.on('updateScoresCorrect', function(correct){
-	document.getElementById("scores").innerHTML += '<div>' + correct + '</div>' + '<hr>';
+socket.on('startScores', function(username, score){
+	document.getElementById("scores").innerHTML += "<span id ='>" + username + "'>" + score + "</span>" + "<hr>";
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 	var elem2 = document.getElementById('scoreContainer');
   	elem2.scrollTop = elem2.scrollHeight;
 })
 
-socket.on('updateScoresIncorrect', function(incorrect){
-	document.getElementById("scores").innerHTML += '<div>' + incorrect + '</div>' + '<hr>';
+socket.on('updateScores', function(username, score){
+	document.getElementById(username).innerHTML = score;
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 	var elem2 = document.getElementById('scoreContainer');
