@@ -15,8 +15,8 @@ socket.on('roomCreated', function(room){
 })
 
 socket.on('updateScores', function(correct, incorrect){
-	$('#users').append('<div>' + correct + '</div>' + '<br>');
-	$('#users').append('<div>' + incorrect + '</div>' + '<br>');
+	$('#scores').append('<div>' + correct + '</div>' + '<hr>');
+	$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 })
 
 socket.on('roomCreatedError', function(notice){
