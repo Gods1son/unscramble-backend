@@ -19,6 +19,8 @@ socket.on('updateScores', function(correct, incorrect){
 	document.getElementById("scores").innerHTML += '<div>' + incorrect + '</div>' + '<hr>';
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
+	var elem2 = document.getElementById('scoreContainer');
+  	elem2.scrollTop = elem2.scrollHeight;
 })
 
 socket.on('roomCreatedError', function(notice){
