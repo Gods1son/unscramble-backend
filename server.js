@@ -22,7 +22,8 @@ var usernamesList = [];
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-		//socket.allUsers = [];
+		
+	//socket.allUsers = [];
 	// when the client emits 'adduser', this listens and executes
 	/*socket.on('adduser', function(username){
 		// store the username in the socket session for this client
@@ -64,7 +65,7 @@ io.sockets.on('connection', function (socket) {
 		// update socket session room title
 		socket.room = newroom;
 		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' has joined this room');
-		socket.emit('updaterooms', rooms, newroom);
+		//socket.emit('updaterooms', rooms, newroom);
 	});
 	
 	socket.on('createRoom',function(roomName){
@@ -80,6 +81,7 @@ io.sockets.on('connection', function (socket) {
 		//socket.emit('allUsers', socket.allUsers);
 		usernamesList[socket.room] = "";
 		usernamesList[socket.room] += socket.username + "<br>";
+		
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
 		io.sockets.in(socket.room).emit('startScores',socket.username,socket.username + " score = " + socket.scores);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
