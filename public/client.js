@@ -14,8 +14,8 @@ socket.on('roomCreated', function(room){
 	alert(room);
 })
 
-socket.on('startScores', function(username, score){
-	document.getElementById("scores").innerHTML += "<span id ='" + username + "'>" + score + "</span>" + "<hr>";
+socket.on('startScores', function(username){
+	document.getElementById("scores").innerHTML = username;
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 	var elem2 = document.getElementById('scoreContainer');
