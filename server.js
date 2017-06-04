@@ -73,30 +73,33 @@ io.sockets.on('connection', function (socket) {
 		rooms.push(roomName);
 		socket.room = roomName;
 		socket.join(roomName);
-		roomName2 = roomName;
+		roomName2 = roomName + roomName;
 		socket.emit('roomCreated',roomName + ' room has been created');
 		//usernamesList[socket.room][socket.username] = socket.username;
 		//usernamesList.roomName.(socket.username) = (socket.username);
 		//socket.allUsers.push(socket.username);
 		//socket.emit('allUsers', socket.allUsers);
 		usernamesList[socket.room] = "";
+		usernamesList[roomName2] = "";
+		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores;
 		usernamesList[socket.room] += socket.username + "<br>";
 		
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
-		io.sockets.in(socket.room).emit('startScores',socket.username,socket.username + " score = " + socket.scores);
+		io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
 	socket.on('joinRoom',function(roomName){
 		socket.room = roomName;
 		socket.join(roomName);
-		roomName2 = roomName;
+		roomName2 = roomName + roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
+		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores;
 		//usernamesList[socket.room][socket.username] = socket.username;
 		//socket.allUsers.push(socket.username);
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		io.sockets.in(socket.room).emit('startScores',socket.username,socket.username + " score = " + socket.scores);
+		io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
 		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
 	
