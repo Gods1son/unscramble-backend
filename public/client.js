@@ -100,6 +100,7 @@ function sendWord(){
 }
 
 function sendGuess(){
+	var result;
 	var word = $("#myGuess").val();
 	word = word.toLowerCase();
 	document.getElementById("myGuess").value = "";
@@ -110,12 +111,14 @@ function sendGuess(){
    		if (word == word2guess) {
    			word = word + " " + "<img src='checkmark-png-22.png' height='30' width='30'>";
    			localStorage.removeItem(roomName);
+			result = "pass";
    		} else {
    			word = word + " " + "<img src='cross.png' height='30' width='30'>";
+			result = "fail";
    		}
 	}
 	//var shuffledWord = shuffleman(word);	
-	socket.emit("sendMyGuess", word);
+	socket.emit("sendMyGuess", word, result);
 }
 
 function shuffleman(word) {
