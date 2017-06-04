@@ -105,12 +105,18 @@ io.sockets.on('connection', function (socket) {
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
-	socket.on('sendMyGuess',function(newWord){
+	socket.on('sendMyGuess',function(newWord, result){
 		var d = new Date();
 		var n = d.toLocaleTimeString();
 		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " " + n);
+		if(result == "pass"){
+		socket.scores["correct"] += 1;
+		}else if(result == "fail"){
+		socket.scores["incorrect"] += 1;
+		}
+		io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
 	
 	socket.on('giveHint', function(hint){
