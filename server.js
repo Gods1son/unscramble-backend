@@ -42,6 +42,9 @@ io.sockets.on('connection', function (socket) {
 	//creating userName
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
+		socket.scores = {};
+		socket.scores["correct"] = 0;
+		socket.scores["incorrect"] = 0;
 		//usernames[username] = username;	
 	});
 	// when the client emits 'sendchat', this listens and executes
@@ -77,7 +80,8 @@ io.sockets.on('connection', function (socket) {
 		//socket.emit('allUsers', socket.allUsers);
 		usernamesList[socket.room] = "";
 		usernamesList[socket.room] += socket.username + "<br>";
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
+		io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
 	})
 
@@ -90,7 +94,7 @@ io.sockets.on('connection', function (socket) {
 		//socket.allUsers.push(socket.username);
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		
+		io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
 	
 	socket.on('sendShuffledWord',function(newWord, originalWord){
