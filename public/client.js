@@ -125,9 +125,9 @@ function sendGuess(){
    			word = word + " " + "<img src='cross.png' height='30' width='30'>";
 			result = "fail";
    		}
+		socket.emit("sendMyGuess", word, result);
 	}
 	//var shuffledWord = shuffleman(word);	
-	socket.emit("sendMyGuess", word, result);
 }
 
 function shuffleman(word) {
