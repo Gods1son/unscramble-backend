@@ -49,7 +49,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(word, room, originalWord){
-	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
+	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	 var elem = document.getElementById('allWords');
   	 elem.scrollTop = elem.scrollHeight;
