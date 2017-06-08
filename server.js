@@ -134,6 +134,12 @@ io.sockets.on('connection', function (socket) {
 		var n = d.toLocaleTimeString();
 		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s HINT -- " + hint + " " + n);
 	})
+	
+	//user passed
+	socket.on('passed', function(pass){
+		io.sockets.in(socket.room).emit('passing',socket.username + pass);
+	})
+	
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
