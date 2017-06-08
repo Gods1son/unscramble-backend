@@ -115,11 +115,15 @@ function giveHint(){
 }
 
 function sendWord(){
+	if (localStorage.getItem(roomName) == "i just played") {
+   		alert("you just played, wait for opponent to play");
+	} else {
 	var word = $("#wordToShuffle").val();
 	word = word.toLowerCase();
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
+	}
 }
 
 function sendGuess(){
