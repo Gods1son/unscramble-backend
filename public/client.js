@@ -62,6 +62,16 @@ socket.on('newWord', function(word, room, originalWord){
 	}
 })
 
+socket.on('newWord3', function(word, room, player){
+	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
+	if (localStorage.getItem(room) == undefined) {
+    	localStorage.setItem(room, player);
+    } else {
+    	localStorage.removeItem(room);
+    	localStorage.setItem(room, player);
+	}
+})
+
 socket.on('newWord2', function(word){
 	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
