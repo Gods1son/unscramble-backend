@@ -138,6 +138,7 @@ io.sockets.on('connection', function (socket) {
 	
 	//user passed
 	socket.on('passed', function(pass){
+		socket.scores -= 1;
 		io.sockets.in(socket.room).emit('passing',socket.username + pass);
 	})
 	
