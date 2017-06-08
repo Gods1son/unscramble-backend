@@ -51,6 +51,7 @@ socket.on('roomJoined', function(room){
 socket.on('newWord', function(word, room, originalWord){
 	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
+	document.getElementById("roomNameStore").value = room;
 	 var elem = document.getElementById('allWords');
   	 elem.scrollTop = elem.scrollHeight;
 	roomName = room;
@@ -64,6 +65,8 @@ socket.on('newWord', function(word, room, originalWord){
 
 socket.on('newWord3', function(word, room, player){
 	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
+	document.getElementById("roomNameStore").value = room;
+	
 	if (localStorage.getItem(room) == undefined) {
     	localStorage.setItem(room, player);
     } else {
@@ -115,7 +118,8 @@ function giveHint(){
 }
 
 function sendWord(){
-	if (localStorage.getItem(roomName) == "i just played") {
+	var roomNameStore = document.getElementById("roomNameStore").value;
+	if (localStorage.getItem(roomNameStore) == "i just played") {
    		alert("you just played, wait for opponent to play");
 	} else {
 	var word = $("#wordToShuffle").val();
