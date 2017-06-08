@@ -69,6 +69,10 @@ socket.on('newWord2', function(word){
   	elem.scrollTop = elem.scrollHeight;
 })
 
+socket.on('passing', function(pass){
+	$('#wordsNew').append("<li style='background-color:green;'>" + pass + "</li>" + "<hr>");
+})
+
 socket.on('sharedHint', function(hint){
 	$('#wordsNew').append('<li>' + hint + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + hint;
