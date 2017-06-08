@@ -130,6 +130,15 @@ function sendGuess(){
 	//var shuffledWord = shuffleman(word);	
 }
 
+function ipass(){
+var confirmpass = confirm("Are you sure want to pass, u lose 1 point");
+if(confirmpass){
+var pass = " says I pass";
+	localStorage.removeItem(roomName);
+	socket.emit("passed", pass);
+     }else{return false;}
+}
+
 function shuffleman(word) {
 	var newword;
 	var newwordform = "";
