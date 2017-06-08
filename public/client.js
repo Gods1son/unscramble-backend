@@ -83,7 +83,7 @@ socket.on('newWord2', function(word){
 })
 
 socket.on('passing', function(pass){
-	$('#wordsNew').append("<li style='background-color:green;'>" + pass + "</li>" + "<hr>");
+	$('#wordsNew').append("<li style='background-color:yellow;'>" + pass + "</li>" + "<hr>");
 	var elem = document.getElementById('allWords');
   	 elem.scrollTop = elem.scrollHeight;
 })
