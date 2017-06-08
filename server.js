@@ -140,6 +140,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('passed', function(pass){
 		socket.scores -= 1;
 		io.sockets.in(socket.room).emit('passing',socket.username + pass);
+		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 	})
 	
 
