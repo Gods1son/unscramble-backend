@@ -121,6 +121,8 @@ function sendWord(){
 	var roomNameStore = document.getElementById("roomNameStore").value;
 	if (localStorage.getItem(roomNameStore) == "i just played") {
    		alert("you just played, wait for opponent to play");
+	}else if (localStorage.getItem(roomNameStore) != "i just played" && localStorage.getItem(roomNameStore) != undefined){
+		alert("There is an unanswered question");
 	} else {
 	var word = $("#wordToShuffle").val();
 	word = word.toLowerCase();
