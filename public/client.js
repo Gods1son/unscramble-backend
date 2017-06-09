@@ -127,6 +127,9 @@ function sendWord(){
 		alert("There is an unanswered question");
 	} else {
 	var word = $("#wordToShuffle").val();
+	if(word == "" || word == null){
+		alert("no word entered!!!");
+	} else{	
 	word = word.toLowerCase();
 	word = word.trim();
 		
@@ -135,12 +138,14 @@ function sendWord(){
 	var is_spelled_correctly = dictionary.check(word);
 	
 	if(is_spelled_correctly == false){
-		alert("not a correct English word");
+		alert("not a correct English word, choose another pls!!!");
+		document.getElementById("wordToShuffle").value = "";
 	} else {
 	//end of dict
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
+			}
 		}
 	}
 }
