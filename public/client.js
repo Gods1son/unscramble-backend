@@ -134,10 +134,14 @@ function sendWord(){
 	var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
 	var is_spelled_correctly = dictionary.check(word);
 	
+	if(is_spelled_correctly == false){
+		alert("not a correct English word");
+	} else {
 	//end of dict
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
+		}
 	}
 }
 
