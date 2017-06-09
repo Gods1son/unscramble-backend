@@ -128,6 +128,7 @@ function sendWord(){
 	} else {
 	var word = $("#wordToShuffle").val();
 	word = word.toLowerCase();
+	word = word.trim();
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
