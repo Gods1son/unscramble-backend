@@ -129,6 +129,12 @@ function sendWord(){
 	var word = $("#wordToShuffle").val();
 	word = word.toLowerCase();
 	word = word.trim();
+		
+	//dictionary try
+		var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
+	var is_spelled_correctly = dictionary.check("mispelled");
+	
+	//end of dict
 	document.getElementById("wordToShuffle").value = "";
 	var shuffledWord = shuffleman(word);
 	socket.emit("sendShuffledWord", shuffledWord, word);
