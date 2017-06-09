@@ -131,8 +131,8 @@ function sendWord(){
 	word = word.trim();
 		
 	//dictionary try
-		var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
-	var is_spelled_correctly = dictionary.check("mispelled");
+	var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
+	var is_spelled_correctly = dictionary.check(word);
 	
 	//end of dict
 	document.getElementById("wordToShuffle").value = "";
