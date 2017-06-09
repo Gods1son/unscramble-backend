@@ -105,18 +105,30 @@ function showJoinRoom() {
 
 function createRoom() {
 	var roomName = $("#createRoomName").val();
+	if(roomName.trim() == ""){
+		alert("Please enter a name!!!");
+	}else{
 	socket.emit("createRoom", roomName);
+	}
 }
 
 function joinRoom() {
 	var roomName = $("#joinRoomName").val();
+	if(roomName.trim() == ""){
+		alert("Please enter a name!!!");
+	}else{
 	socket.emit("joinRoom", roomName);
+	}
 }
 
 function giveHint(){
 	var hint = $("#myHint").val();
+	if(hint.trim() == ""){
+		alert("U cannot send empty message!");
+	}else{
 	document.getElementById("myHint").value = "";
 	socket.emit("giveHint", hint);
+	}
 }
 
 function sendWord(){
@@ -154,6 +166,9 @@ function sendGuess(){
 	var result;
 	var word = $("#myGuess").val();
 	word = word.toLowerCase();
+	if(word.trim() == ""){
+		alert("You cannot send empty answer!");
+	}else {
 	document.getElementById("myGuess").value = "";
 	if (localStorage.getItem(roomName) == undefined) {
    		alert("no word to guess");
@@ -163,13 +178,13 @@ function sendGuess(){
    			word = word + " " + "<img src='checkmark-png-22.png' height='30' width='30'>";
    			localStorage.removeItem(roomName);
 			result = "pass";
-   		} else {
+   			} else {
    			word = word + " " + "<img src='cross.png' height='30' width='30'>";
 			result = "fail";
-   		}
+   			}
 		socket.emit("sendMyGuess", word, result);
-	}
-	//var shuffledWord = shuffleman(word);	
+		}
+	}//var shuffledWord = shuffleman(word);	
 }
 
 function ipass(){
