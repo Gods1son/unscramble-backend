@@ -1,6 +1,7 @@
 
 var socket = io();
-var roomName;  
+var roomName; 
+var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
@@ -146,7 +147,7 @@ function sendWord(){
 	word = word.trim();
 		
 	//dictionary try
-	var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
+	//var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/dictionaries" });
 	var is_spelled_correctly = dictionary.check(word);
 	
 	if(is_spelled_correctly == false){
