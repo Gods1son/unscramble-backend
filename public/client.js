@@ -50,7 +50,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(word, room, originalWord){
-	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
+	$('#wordsNew').append("<li style='background-color:aqua'><span id='" + word + "'>" + word + "</span><button onclick='reshuffle(" + word + ")'" + "Re-shuffle</button></li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	document.getElementById("roomNameStore").value = room;
 	 var elem = document.getElementById('allWords');
@@ -229,6 +229,12 @@ function shuffleman(word) {
     //save word to localstorage
 	  return newwordform;
    }
+
+  function reshuffle(word2){
+  var theword = document.getElementById(word2).innerHTML;
+	  var newword2 = shuffleman(theword);
+	  document.getElementById(word2).innerHTML = newword2;
+  }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
    socket.on('connect', function(){
