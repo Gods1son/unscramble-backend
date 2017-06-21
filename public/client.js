@@ -231,9 +231,9 @@ function shuffleman(word) {
    }
 
   function reshuffle(word2){
-  var theword = document.getElementById(word2).innerHTML;
+  var theword = word2.innerHTML;
 	  var newword2 = shuffleman(theword);
-	  document.getElementById(word2).innerHTML = newword2;
+	  word2.innerHTML = newword2;
   }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
