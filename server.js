@@ -106,8 +106,9 @@ io.sockets.on('connection', function (socket) {
 	socket.on('sendShuffledWord',function(newWord, originalWord){
 		var d = new Date();
 		var n = d.toLocaleTimeString();
+		var theword = newWord;
 		var player = "i just played";
-		socket.emit('newWord3',socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, player);
+		socket.emit('newWord3',theword,socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, player);
 		socket.broadcast.to(socket.room).emit('newWord',socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, originalWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
