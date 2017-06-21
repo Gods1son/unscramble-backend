@@ -108,8 +108,8 @@ io.sockets.on('connection', function (socket) {
 		var n = d.toLocaleTimeString();
 		var theword = newWord;
 		var player = "i just played";
-		socket.emit('newWord3',theword,socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, player);
-		socket.broadcast.to(socket.room).emit('newWord',socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, originalWord);
+		socket.emit('newWord3',socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, player);
+		socket.broadcast.to(socket.room).emit('newWord',theword, socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, originalWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
