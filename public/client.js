@@ -23,6 +23,10 @@ socket.on('startScores', function(username){
   	elem2.scrollTop = elem2.scrollHeight;
 })
 
+socket.on('requestScores', function(){
+	socket.emit("shareScores");
+})
+
 socket.on('updateScores', function(username, score){
 	if(document.getElementById(username) == null || document.getElementById(username) == undefined){
 	   var scoresHolder = document.getElementById("scores");
