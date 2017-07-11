@@ -109,7 +109,7 @@ io.sockets.on('connection', function (socket) {
 		var theword = newWord;
 		var player = "i just played";
 		socket.emit('newWord3',socket.username + "'s QUESTION -- " + newWord + " " + n, socket.room, player);
-		socket.broadcast.to(socket.room).emit('newWord',theword, socket.username + "'s QUESTION -- " + n, socket.room, originalWord);
+		socket.broadcast.to(socket.room).emit('newWord',theword, socket.username + "'s QUESTION is -- " , socket.room, originalWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
 	})
 	
@@ -118,7 +118,7 @@ io.sockets.on('connection', function (socket) {
 		var n = d.toLocaleTimeString();
 		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " " + n);
+		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " ");
 		if(result == "pass"){
 		socket.scores += 1;
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
@@ -134,7 +134,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('giveHint', function(hint){
 		var d = new Date();
 		var n = d.toLocaleTimeString();
-		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s HINT -- " + hint + " " + n);
+		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s HINT -- " + hint + " ");
 	})
 	
 	//user passed
