@@ -50,7 +50,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(theword, word, room, originalWord){
-	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "<button onclick='reshuffle(" + theword + ")'>" + "Re-shuffle</button></li>" + "<hr>");
+	$('#wordsNew').append("<li><span style='background-color:aqua' onclick='reshuffle(this.innerHTML)'>" + word + "</span></li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	document.getElementById("roomNameStore").value = room;
 	 var elem = document.getElementById('allWords');
@@ -65,7 +65,7 @@ socket.on('newWord', function(theword, word, room, originalWord){
 })
 
 socket.on('newWord3', function(word, room, player){
-	$('#wordsNew').append("<li style='background-color:aqua'>" + word + "</li>" + "<hr>");
+	$('#wordsNew').append("<li><span style='background-color:aqua'>" + word + "</span></li>" + "<hr>");
 	document.getElementById("roomNameStore").value = room;
 	
 	if (localStorage.getItem(room) == undefined) {
@@ -231,7 +231,7 @@ function shuffleman(word) {
    }
 
   function reshuffle(word2){
-  var theword = word2.innerHTML;
+  var theword = word2;
 	  var newword2 = shuffleman(theword);
 	  word2.innerHTML = newword2;
   }
