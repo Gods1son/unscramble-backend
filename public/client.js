@@ -233,7 +233,7 @@ function shuffleman(word) {
   function reshuffle(word2){
   var theword = word2;
 	  var newword2 = shuffleman(theword);
-	  word2.innerHTML = newword2;
+	  $(this).html(newword2);
   }
 
   /*  // on connection to server, ask for user's name with an anonymous callback
