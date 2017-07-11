@@ -50,7 +50,7 @@ socket.on('roomJoined', function(room){
 })
 
 socket.on('newWord', function(theword, word, room, originalWord){
-	$('#wordsNew').append("<li><span style='background-color:aqua' onclick='reshuffle(this.innerHTML)'>" + word + "</span></li>" + "<hr>");
+	$('#wordsNew').append("<li>" + word + " " + "<span style='background-color:aqua' onclick='reshuffle(this.innerHTML)'>" + theword + "</span></li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	document.getElementById("roomNameStore").value = room;
 	 var elem = document.getElementById('allWords');
