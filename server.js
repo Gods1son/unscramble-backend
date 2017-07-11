@@ -100,9 +100,15 @@ io.sockets.on('connection', function (socket) {
 		
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
+		socket.broadcast.to(socket.room).emit('requestScores');
 		//io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
+	})
+	
+	//for sharing scores
+	socket.on('shareScores',function(){
+		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 	})
 	
 	socket.on('sendShuffledWord',function(newWord, originalWord){
