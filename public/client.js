@@ -26,11 +26,11 @@ socket.on('startScores', function(username){
 socket.on('updateScores', function(username, score){
 	if(document.getElementById(username) == null || document.getElementById(username) == undefined){
 	   var scoresHolder = document.getElementById("scores");
-		document.getElementById("scores").appendChild(document.createElement("HR"));
 		var spanNew = document.createElement("SPAN");
 		document.getElementById("scores").appendChild(spanNew);
 		spanNew.id = username;
 		document.getElementById(username).innerHTML = score;
+		document.getElementById("scores").appendChild(document.createElement("HR"));
 	 }else{
 	document.getElementById(username).innerHTML = score; }
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
