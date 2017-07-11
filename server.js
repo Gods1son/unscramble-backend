@@ -134,7 +134,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('giveHint', function(hint){
 		var d = new Date();
 		var n = d.toLocaleTimeString();
-		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s HINT -- " + hint + " ");
+		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s MSG -- " + hint + " ");
 	})
 	
 	//user passed
