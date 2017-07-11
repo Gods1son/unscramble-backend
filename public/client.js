@@ -24,7 +24,13 @@ socket.on('startScores', function(username){
 })
 
 socket.on('updateScores', function(username, score){
-	document.getElementById(username).innerHTML = score;
+	if(document.getElementById(username) == null || document.getElementById(username) == undefined){
+	   var scoresHolder = document.getElementById("scores");
+		var spanNew = scoresHolder.createElement("SPAN");
+		spanNew.id = username;
+		document.getElementById(username).innerHTML = score;
+	 }else{
+	document.getElementById(username).innerHTML = score; }
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
 	var elem2 = document.getElementById('scoreContainer');
