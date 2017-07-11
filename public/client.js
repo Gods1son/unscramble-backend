@@ -64,8 +64,8 @@ socket.on('newWord', function(theword, word, room, originalWord){
 	}
 })
 
-socket.on('newWord3', function(word, room, player){
-	$('#wordsNew').append("<li><span style='background-color:aqua'>" + word + "</span></li>" + "<hr>");
+socket.on('newWord3', function(word, theword, room, player){
+	$('#wordsNew').append("<li>" + word + " " + "<span style='background-color:aqua' onclick='reshuffle(this.innerHTML)'>" + theword + "</span></li>" + "<hr>");
 	document.getElementById("roomNameStore").value = room;
 	
 	if (localStorage.getItem(room) == undefined) {
