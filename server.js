@@ -97,9 +97,11 @@ io.sockets.on('connection', function (socket) {
 		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>" + "<hr>";
 		//usernamesList[socket.room][socket.username] = socket.username;
 		//socket.allUsers.push(socket.username);
+		
 		usernamesList[socket.room] += socket.username + "<br>";
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
+		//io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
+		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
 	})
 	
@@ -150,7 +152,7 @@ io.sockets.on('connection', function (socket) {
 		if(socket.room != undefined || socket.room != null){
 		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
 		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username + "<br>", "");	
-		socket.scores = "disconnected";
+		socket.scores += " (disconnected)";
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
 		// remove the username from global usernames list
