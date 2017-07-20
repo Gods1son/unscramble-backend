@@ -126,7 +126,7 @@ io.sockets.on('connection', function (socket) {
 		var n = d.toLocaleTimeString();
 		//socket.emit('newWord', newWord);
 		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " ",result);
+		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " ",result,socket.room);
 		if(result == "pass"){
 		socket.scores += 1;
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
