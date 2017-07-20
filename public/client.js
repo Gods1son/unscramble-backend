@@ -118,6 +118,20 @@ function showCreateRoom() {
 	$("#createRoomName").focus();
 }
 
+$("#createRoomName").keypress(function(e) {
+    if(e.which == 13) {
+        createRoom();
+    }
+});
+
+$("#joinRoomName").keypress(function(e) {
+    if(e.which == 13) {
+        joinRoom();
+    }
+});
+
+
+
 function showJoinRoom() {
 	$("#joinRoomContainer").toggle();
 	$("#joinRoomName").focus();
