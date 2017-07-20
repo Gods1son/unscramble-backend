@@ -115,10 +115,12 @@ socket.on('sharedHint', function(hint){
 
 function showCreateRoom() {
 	$("#createRoomContainer").toggle();
+	$("#createRoomName").focus();
 }
 
 function showJoinRoom() {
 	$("#joinRoomContainer").toggle();
+	$("#joinRoomName").focus();
 }
 
 function createRoom() {
