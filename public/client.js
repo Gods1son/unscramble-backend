@@ -130,6 +130,23 @@ $("#joinRoomName").keypress(function(e) {
     }
 });
 
+$("#wordToShuffle").keypress(function(e) {
+    if(e.which == 13) {
+        sendWord();
+    }
+});
+
+$("#myGuess").keypress(function(e) {
+    if(e.which == 13) {
+        sendGuess();
+    }
+});
+
+$("#myHint").keypress(function(e) {
+    if(e.which == 13) {
+        giveHint();
+    }
+});
 
 
 function showJoinRoom() {
