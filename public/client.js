@@ -94,7 +94,7 @@ socket.on('newWord2', function(word, result, room){
 	var elem = document.getElementById('allWords');
   	elem.scrollTop = elem.scrollHeight;
 	if(result == "pass"){
-		if (localStorage.getItem(room) != undefined){
+		if (localStorage.getItem(room) != undefined && localStorage.getItem(room) != "i just played"){
 			localStorage.removeItem(room);
 		}
 	}
