@@ -88,11 +88,16 @@ socket.on('newWord3', function(word, theword, room, player){
 	}
 })
 
-socket.on('newWord2', function(word){
+socket.on('newWord2', function(word, result, room){
 	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	var elem = document.getElementById('allWords');
   	elem.scrollTop = elem.scrollHeight;
+	if(result == "pass"){
+		if (localStorage.getItem(room) != undefined){
+			localStorage.removeItem(room);
+		}
+	}
 })
 
 socket.on('passing', function(pass){
@@ -189,7 +194,7 @@ function sendGuess(){
 	var word2guess = localStorage.getItem(roomName);
    		if (word == word2guess) {
    			word = word + " " + "<img src='checkmark-png-22.png' height='30' width='30'>";
-   			localStorage.removeItem(roomName);
+   			//localStorage.removeItem(roomName);
 			result = "pass";
    			} else {
    			word = word + " " + "<img src='cross.png' height='30' width='30'>";
