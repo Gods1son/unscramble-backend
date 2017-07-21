@@ -56,7 +56,7 @@ socket.on('allUsers', function(data){
 		});*/
 	
 		$('#users').append('<div>' + data + '</div>');
-	
+		$('#notyIcon').show();
 })
 
 socket.on('roomJoined', function(room){
