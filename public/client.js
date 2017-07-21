@@ -36,7 +36,7 @@ socket.on('updateScores', function(username, score){
 		document.getElementById("scores").appendChild(spanNew);
 		spanNew.id = username;
 		document.getElementById(username).innerHTML = score;
-		document.getElementById("scores").appendChild(document.createElement("HR"));
+		//document.getElementById("scores").appendChild(document.createElement("HR"));
 	 }else{
 	document.getElementById(username).innerHTML = score; }
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
