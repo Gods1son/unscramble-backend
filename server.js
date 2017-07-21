@@ -81,7 +81,7 @@ io.sockets.on('connection', function (socket) {
 		//socket.emit('allUsers', socket.allUsers);
 		usernamesList[socket.room] = "";
 		usernamesList[roomName2] = "";
-		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>" + "<hr>";
+		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>";
 		usernamesList[socket.room] += socket.username + "<br>";
 		
 		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
@@ -94,7 +94,7 @@ io.sockets.on('connection', function (socket) {
 		socket.join(roomName);
 		roomName2 = roomName + roomName;
 		socket.emit('roomJoined',roomName + ' room has been joined');
-		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>" + "<hr>";
+		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>";
 		//usernamesList[socket.room][socket.username] = socket.username;
 		//socket.allUsers.push(socket.username);
 		
