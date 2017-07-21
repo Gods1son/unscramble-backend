@@ -122,12 +122,14 @@ function showCreateRoom() {
 
 $("#createRoomName").keypress(function(e) {
     if(e.which == 13) {
+	$('#closeCreate').click();
         createRoom();
     }
 });
 
 $("#joinRoomName").keypress(function(e) {
     if(e.which == 13) {
+	$('#closeJoin').click();
         joinRoom();
     }
 });
@@ -161,6 +163,7 @@ function createRoom() {
 	if(roomName.trim() == ""){
 		alert("Please enter a name!!!");
 	}else{
+	$('#closeCreate').click();
 	socket.emit("createRoom", roomName);
 	}
 }
@@ -170,6 +173,7 @@ function joinRoom() {
 	if(roomName.trim() == ""){
 		alert("Please enter a name!!!");
 	}else{
+	$('#closeJoin').click();
 	socket.emit("joinRoom", roomName);
 	}
 }
