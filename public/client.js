@@ -5,12 +5,14 @@ var dictionary = new Typo("en_US", false, false, { dictionaryPath: "typo/diction
  // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){
 		// call the server-side function 'adduser' and send one parameter (value of prompt)
-		var user = prompt("Pick a username");
-	  	document.getElementById("userNameIs").innerHTML = "Welcome " + user;
-		socket.emit("pickUsername", user);
+		socket.emit("pickUsername", prompt("Pick a username"));
 	});
 socket.on('disconnectedUser', function(info){
 	alert(info);
+})
+
+socket.on('welcomeHere', function(username){
+	document.getElementById("userNameIs").innerHTML = "Wwelcome " + username;
 })
 
 socket.on('roomCreated', function(room){
