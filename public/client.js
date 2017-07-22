@@ -12,7 +12,7 @@ socket.on('disconnectedUser', function(info){
 })
 
 socket.on('welcomeHere', function(username){
-	document.getElementById("userNameIs").innerHTML = "Wwelcome " + username;
+	document.getElementById("userNameIs").innerHTML = "Welcome " + username;
 })
 
 socket.on('roomCreated', function(room){
