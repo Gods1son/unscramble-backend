@@ -23,8 +23,8 @@ socket.on('startScores', function(username){
 	document.getElementById("scores").innerHTML = username;
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
-	var elem2 = document.getElementById('scoreContainer');
-  	elem2.scrollTop = elem2.scrollHeight;
+	//var elem2 = document.getElementById('scoreContainer');
+  	//elem2.scrollTop = elem2.scrollHeight;
 })
 
 socket.on('requestScores', function(){
@@ -43,8 +43,8 @@ socket.on('updateScores', function(username, score){
 	document.getElementById(username).innerHTML = score; }
 	//$('#scores').append('<div>' + correct + '</div>' + '<hr>');
 	//$('#scores').append('<div>' + incorrect + '</div>' + '<hr>');
-	var elem2 = document.getElementById('scoreContainer');
-  	elem2.scrollTop = elem2.scrollHeight;
+	//var elem2 = document.getElementById('scoreContainer');
+  	//elem2.scrollTop = elem2.scrollHeight;
 })
 
 socket.on('roomCreatedError', function(notice){
@@ -69,7 +69,7 @@ socket.on('newWord', function(theword, word, room, originalWord){
 	$('#wordsNew').append("<li>" + word + " " + "<span style='background-color:aqua' onclick='reshuffle(this.innerHTML)'>" + theword + "</span></li>" + "<hr>");
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
 	document.getElementById("roomNameStore").value = room;
-	 var elem = document.getElementById('allWords');
+	 var elem = document.getElementById('allWordsHolder');
   	 elem.scrollTop = elem.scrollHeight;
 	roomName = room;
 	if (localStorage.getItem(room) == undefined) {
@@ -95,7 +95,7 @@ socket.on('newWord3', function(word, theword, room, player){
 socket.on('newWord2', function(word, result, room){
 	$('#wordsNew').append('<li>' + word + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + word;
-	var elem = document.getElementById('allWords');
+	var elem = document.getElementById('allWordsHolder');
   	elem.scrollTop = elem.scrollHeight;
 	if(result == "pass"){
 		if (localStorage.getItem(room) != undefined && localStorage.getItem(room) != "i just played"){
@@ -106,14 +106,14 @@ socket.on('newWord2', function(word, result, room){
 
 socket.on('passing', function(pass){
 	$('#wordsNew').append("<li style='background-color:yellow;'>" + pass + "</li>" + "<hr>");
-	var elem = document.getElementById('allWords');
+	var elem = document.getElementById('allWordsHolder');
   	 elem.scrollTop = elem.scrollHeight;
 })
 
 socket.on('sharedHint', function(hint){
 	$('#wordsNew').append('<li>' + hint + '</li>' + '<hr>');
 	//document.getElementById("wordsNew").innerHTML += "<br>" + hint;
-	var elem = document.getElementById('allWords');
+	var elem = document.getElementById('allWordsHolder');
   	elem.scrollTop = elem.scrollHeight;
 })
 
