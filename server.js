@@ -44,6 +44,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
+		socket.emit('welcomeHere', username);
 		//socket.scores["correct"] = 0;
 		//socket.scores["incorrect"] = 0;
 		//usernames[username] = username;	
