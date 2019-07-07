@@ -13,17 +13,7 @@ app.use(express.static('public'));
 
   app.get('/', function(req, res, next) {
   	//res.sendFile(__dirname + '/public/index.html');
-	  var connectionString = "postgres://lryxskpsonpzre:6a7d6daf5a228551cc7327ecde372056dd195bb661b27d61776e8fbd65c75cd6@ec2-174-129-209-212.compute-1.amazonaws.com:5432/d53j08lg7a1h6b";
-
-	pg.connect(connectionString, function(err, client, done) {
-	   client.query('SELECT * FROM users', function(err, result) {
-	      if(err) return console.error(err);   
-		done();
-	      console.log(result.rows);
-		res.render('index', {data : result.rows});
-	   });
-	});
-	  
+	  res.render('index');
   });
 
 
@@ -39,16 +29,18 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
-		/*const { Pool } = require('pg');
-		const pool = new Pool({
-		  connectionString: process.env.DATABASE_URL,
-		  ssl: true
-		});
-		const client = await pool.connect()
-      		const result = await client.query('SELECT * FROM users');
-      		const results = { 'results': (result) ? result.rows : null};
-		client.release();*/
-		socket.emit('welcomeHere', username);		
+	var connectionString = "postgres://lryxskpsonpzre:6a7d6daf5a228551cc7327ecde372056dd195bb661b27d61776e8fbd65c75cd6@ec2-174-129-209-212.compute-1.amazonaws.com:5432/d53j08lg7a1h6b";
+
+	pg.connect(connectionString, function(err, client, done) {
+	   client.query('SELECT * FROM users', function(err, result) {
+	      if(err) return console.error(err);   
+		done();
+	      console.log(result.rows);
+		   socket.emit('welcomeHere', username, result.rows);
+		//res.render('index', {data : result.rows});
+	   });
+	});
+		//socket.emit('welcomeHere', username);		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
