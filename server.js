@@ -19,11 +19,18 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-const client = await pool.connect()
-const result = await client.query('SELECT * FROM users');
-const results = { 'results': (result) ? result.rows : null};
-//res.render('pages/db', results );
-client.release();
+app.get('/db', async (req, res) => {
+    try {
+      const client = await pool.connect()
+      const result = await client.query('SELECT * FROM users');
+      const results = { 'results': (result) ? result.rows : null};
+      res.render('public/db', results );
+      client.release();
+    } catch (err) {
+      console.error(err);
+      res.send("Error " + err);
+    }
+  })
 
 app.use(express.static('public'));
 
@@ -55,11 +62,8 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
-		//socket.scores["correct"] = 0;
-		//socket.scores["incorrect"] = 0;
-		//usernames[username] = username;
 		
-		socket.emit('welcomeHere', username, results);		
+		socket.emit('welcomeHere', username);		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
