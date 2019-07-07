@@ -11,7 +11,7 @@ socket.on('disconnectedUser', function(info){
 	alert(info);
 })
 
-socket.on('welcomeHere', function(username){
+socket.on('welcomeHere', function(username, data){
 	document.getElementById("userNameIs").innerHTML = "Welcome " + username;
 })
 
