@@ -14,6 +14,8 @@ server.listen(port);
   	res.sendFile(__dirname + '/public/index.html')
   });
 
+var pg = require('pg');
+
   app.use(express.static('public'));
 
 var usernamesList = [];
@@ -44,7 +46,15 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
-		socket.emit('welcomeHere', username);
+		pg.connectprocess.env.DATABASE_URL, function(err, client, done) {
+   			client.query('SELECT * FROM your_table', function(err, result) {
+      			done();
+      			if(err) return console.error(err);
+      			//console.log(result.rows);
+			socket.emit('welcomeHere', username, result);
+   			});
+		});
+		
 		//socket.scores["correct"] = 0;
 		//socket.scores["incorrect"] = 0;
 		//usernames[username] = username;	
