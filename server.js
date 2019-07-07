@@ -9,24 +9,15 @@ server.listen(port);
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });*/
+app.use(express.static('public'));
 
   app.get('/', function(req, res, next) {
-  	res.sendFile(__dirname + '/public/index.html')
+  	//res.sendFile(__dirname + '/public/index.html');
+	  res.render('index');
   });
 
 
-/*app.get('/db', async (req, res) => {
-    try {
-      
-      res.render('public/db', results );
-      
-    } catch (err) {
-      console.error(err);
-      res.send("Error " + err);
-    }
-  })*/
 
-app.use(express.static('public'));
 
 var usernamesList = [];
 
@@ -38,7 +29,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
-		const { Pool } = require('pg');
+		/*const { Pool } = require('pg');
 		const pool = new Pool({
 		  connectionString: process.env.DATABASE_URL,
 		  ssl: true
@@ -46,8 +37,8 @@ io.sockets.on('connection', function (socket) {
 		const client = await pool.connect()
       		const result = await client.query('SELECT * FROM users');
       		const results = { 'results': (result) ? result.rows : null};
-		client.release();
-		socket.emit('welcomeHere', username, results);		
+		client.release();*/
+		socket.emit('welcomeHere', username);		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
