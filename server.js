@@ -49,7 +49,8 @@ io.sockets.on('connection', function (socket) {
 		//socket.scores["correct"] = 0;
 		//socket.scores["incorrect"] = 0;
 		//usernames[username] = username;
-		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+		var conn = "postgres://lryxskpsonpzre:6a7d6daf5a228551cc7327ecde372056dd195bb661b27d61776e8fbd65c75cd6@ec2-174-129-209-212.compute-1.amazonaws.com:5432/d53j08lg7a1h6b";
+		pg.connect(conn, function(err, client, done) {
   				client.query('SELECT * FROM users', function(err, result) {
 			    	done();
     				if(err) return console.error(err);
