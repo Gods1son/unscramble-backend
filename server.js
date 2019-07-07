@@ -51,7 +51,8 @@ io.sockets.on('connection', function (socket) {
       			done();
       			if(err) return console.error(err);
       			//console.log(result.rows);
-			socket.emit('welcomeHere', username, result);
+				console.log(result);
+			socket.emit('welcomeHere', username);
    			});
 		});
 		
