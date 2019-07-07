@@ -19,8 +19,13 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
+const client = await pool.connect()
+const result = await client.query('SELECT * FROM users');
+const results = { 'results': (result) ? result.rows : null};
+//res.render('pages/db', results );
+client.release();
 
-  app.use(express.static('public'));
+app.use(express.static('public'));
 
 var usernamesList = [];
 
@@ -53,12 +58,8 @@ io.sockets.on('connection', function (socket) {
 		//socket.scores["correct"] = 0;
 		//socket.scores["incorrect"] = 0;
 		//usernames[username] = username;
-		/*const client = await pool.connect()
-      		const result = await client.query('SELECT * FROM users');
-      		const results = { 'results': (result) ? result.rows : null};
-      		//res.render('pages/db', results );
-      		client.release();*/
-		socket.emit('welcomeHere', username);		
+		
+		socket.emit('welcomeHere', username, results);		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
