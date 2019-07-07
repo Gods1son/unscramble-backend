@@ -49,7 +49,15 @@ io.sockets.on('connection', function (socket) {
 		//socket.scores["correct"] = 0;
 		//socket.scores["incorrect"] = 0;
 		//usernames[username] = username;
-		socket.emit('welcomeHere', username);
+		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+  				client.query('SELECT * FROM users', function(err, result) {
+			    	done();
+    				if(err) return console.error(err);
+    				//console.log(result.rows);
+				socket.emit('welcomeHere', username, result);
+  			});
+		});
+		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
