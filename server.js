@@ -47,12 +47,11 @@ io.sockets.on('connection', function (socket) {
 		socket.username = username;
 		socket.scores = 0;
 		pg.connectprocess.env.DATABASE_URL, function(err, client, done) {
-   			client.query('SELECT * FROM your_table', function(err, result) {
+   			client.query('SELECT * FROM users', function(err, result) {
       			done();
       			if(err) return console.error(err);
       			//console.log(result.rows);
-				console.log(result);
-			socket.emit('welcomeHere', username);
+			socket.emit('welcomeHere', username, result);
    			});
 		});
 		
