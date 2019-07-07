@@ -20,7 +20,7 @@ app.use(express.static('public'));
 	      if(err) return console.error(err);   
 		done();
 	      console.log(result.rows);
-		res.render('index', result.rows);
+		res.render('index', {data : result.rows});
 	   });
 	});
 	  
