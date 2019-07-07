@@ -46,7 +46,7 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		socket.username = username;
 		socket.scores = 0;
-		pg.connectprocess.env.DATABASE_URL, function(err, client, done) {
+		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
    			client.query('SELECT * FROM users', function(err, result) {
       			done();
       			if(err) return console.error(err);
