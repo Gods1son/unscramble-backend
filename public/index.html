@@ -11,8 +11,11 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="client.js"></script>
 	<script>
-		var data = "{{ data }}";
-  		console.log(data);
+		function testData(){
+		$.get( "/getvar", function( data ) {
+ 			 var datat = data;
+			});
+		}
 		function hideNoty(){
 			$("#notyIcon").hide();
 		}
