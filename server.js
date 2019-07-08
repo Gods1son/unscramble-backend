@@ -3,6 +3,7 @@
 var port = process.env.PORT || 7777;
   var server = require('http').createServer(app);
   var io = require('socket.io')(server);
+var pg = require('pg');
 
 server.listen(port);
 /*io.configure(function () {
