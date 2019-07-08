@@ -26,10 +26,10 @@ app.use(express.static('public'));
 	      console.log(result.rows);
 		   //res.json({ data: result.rows });
 		   //socket.emit('welcomeHere', username, result.rows);
-		res.render('db', {data : result.rows});
+		//res.render('db', {data : result.rows});
 	   });
 	});
-	  //res.render('index');
+	  res.render('db');
   });
 
 var usernamesList = [];
