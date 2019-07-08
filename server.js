@@ -11,7 +11,11 @@ server.listen(port);
 });*/
 app.use(express.static('public'));
 
-  app.get('/', function(req, res, next) {
+ app.get('/', function(req, res, next) {
+	res.render('index'); 
+ })
+
+  app.get('/db', function(req, res, next) {
   	//res.sendFile(__dirname + '/public/index.html');
 	  var connectionString = "postgres://lryxskpsonpzre:6a7d6daf5a228551cc7327ecde372056dd195bb661b27d61776e8fbd65c75cd6@ec2-174-129-209-212.compute-1.amazonaws.com:5432/d53j08lg7a1h6b";
 	pg.connect(connectionString, function(err, client, done) {
@@ -21,7 +25,7 @@ app.use(express.static('public'));
 	      console.log(result.rows);
 		   //res.json({ data: result.rows });
 		   //socket.emit('welcomeHere', username, result.rows);
-		res.render('index', {data : result.rows});
+		res.render('db', {data : result.rows});
 	   });
 	});
 	  //res.render('index');
