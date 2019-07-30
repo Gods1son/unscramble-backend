@@ -39,10 +39,11 @@ var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
 	//register user
+	var name;
 	socket.on('pickUsername', function (username) {
 		var success = true;
 		if(usernamesList[username] == undefined){
-		     var name = username;
+		     name = username;
 		     var obj = {};
 		     obj.online = true;
 		     usernamesList[name] = obj; 
@@ -159,19 +160,14 @@ io.sockets.on('connection', function (socket) {
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
-		if(socket.room != undefined || socket.room != null){
+		/*if(socket.room != undefined || socket.room != null){
 		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
 		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username + "<br>", "");	
 		socket.scores += " (disconnected)";
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		// remove the username from global usernames list
-		/*delete usernames[socket.username];
-		// update list of users in chat, client-side
-		io.sockets.emit('updateusers', usernames);
-		// echo globally that this client has left
-		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
-		socket.leave(socket.room); */
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);*/
+		    //delete user from userlist
+		    delete usernamesList[name];
 		}
 	});
 });
