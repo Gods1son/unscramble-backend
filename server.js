@@ -8,11 +8,11 @@ var pg = require('pg');
 
 server.listen(port);
 //io.set('origins', '*')
-io.configure(function () {
+/*io.configure(function () {
  // io.set('origins', '*');
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
-});
+});*/
 app.use(express.static('public'));
 // Add headers
 app.use(function (req, res, next) {
