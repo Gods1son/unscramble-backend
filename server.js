@@ -32,17 +32,24 @@ app.use(express.static('public'));
 	  res.render('db');
   });
 
-var usernamesList = [];
+var usernamesList = {};
 
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-	//creating userName
+	//register user
 	socket.on('pickUsername', function (username) {
-		socket.username = username;
-		socket.scores = 0;
-		socket.emit('welcomeHere', username);		
+		var success = true;
+		if(usernamesList[username] == undefined){
+		     username = {};
+		     username["online"] = true;
+		     usernamesList.push(username); 
+		     socket.emit('welcomeHere', success, username);
+		}else{
+		     success = false;
+		     socket.emit('welcomeHere', success);
+		}		
 	});
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
