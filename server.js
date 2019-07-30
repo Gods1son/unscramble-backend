@@ -165,10 +165,12 @@ io.sockets.on('connection', function (socket) {
 		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username + "<br>", "");	
 		socket.scores += " (disconnected)";
 		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);*/
+		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
+		}
+		*/
 		    //delete user from userlist
 		    delete usernamesList[name];
-		}
+		
 	});
 });
 
