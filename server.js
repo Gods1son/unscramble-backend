@@ -38,6 +38,18 @@ var usernamesList = [];
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-	  
+	//register user
+	socket.on('pickUsername', function (username) {
+		var success = true;
+		if(usernamesList.indexOf(username) == -1){
+		     socket.emit('welcomeHere', success);
+		     username = {};
+		     username["online"] = true;
+		     usernamesList.push(username);
+		}else{
+		     success = false;
+		     socket.emit('welcomeHere', success);
+		}		
+	});
 });
 
