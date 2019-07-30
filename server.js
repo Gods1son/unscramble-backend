@@ -4,7 +4,7 @@ var app = express();
 app.use(cors());
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-var port = process.env.PORT || 3000; 
+var port = process.env.PORT || 80; 
 var pg = require('pg');
 server.listen(port);
 //io.set('origins', '*')
