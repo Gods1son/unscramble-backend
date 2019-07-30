@@ -1,11 +1,11 @@
   var express = require('express');
-  var app = express();
-var port = process.env.PORT || 3000;
-  var server = require('http').createServer(app);
-  var io = require('socket.io')(server);
+var cors = require("cors");
+var app = express();
+app.use(cors());
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var port = process.env.PORT || 3000; 
 var pg = require('pg');
-
-
 server.listen(port);
 //io.set('origins', '*')
 /*io.configure(function () {
