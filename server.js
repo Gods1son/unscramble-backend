@@ -4,6 +4,7 @@ var port = process.env.PORT || 7777;
   var server = require('http').createServer(app);
   var io = require('socket.io')(server);
 var pg = require('pg');
+var name;
 
 server.listen(port);
 /*io.configure(function () {
@@ -39,7 +40,6 @@ var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
 	//register user
-	var name;
 	socket.on('pickUsername', function (username) {
 		var success = true;
 		if(usernamesList[username] == undefined){
