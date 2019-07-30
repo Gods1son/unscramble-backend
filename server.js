@@ -42,9 +42,10 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		var success = true;
 		if(usernamesList[username] == undefined){
-		     username = {};
-		     username["online"] = true;
-		     usernamesList.push(username); 
+		     var name = username;
+		     var obj = {};
+		     obj.online = true;
+		     usernamesList[name] = obj; 
 		     socket.emit('welcomeHere', success, username);
 		}else{
 		     success = false;
