@@ -32,7 +32,7 @@ app.use(express.static('public'));
 	  res.render('db');
   });
 
-var usernamesList = [];
+var usernamesList = {};
 
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
@@ -41,11 +41,11 @@ io.sockets.on('connection', function (socket) {
 	//register user
 	socket.on('pickUsername', function (username) {
 		var success = true;
-		if(usernamesList.indexOf(username) == -1){
-		     socket.emit('welcomeHere', success);
+		if(usernamesList[username] == undefined){
 		     username = {};
 		     username["online"] = true;
-		     usernamesList.push(username);
+		     usernamesList.push(username); 
+		     socket.emit('welcomeHere', success, username);
 		}else{
 		     success = false;
 		     socket.emit('welcomeHere', success);
