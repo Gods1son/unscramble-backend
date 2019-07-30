@@ -9,7 +9,7 @@ var pg = require('pg');
 server.listen(port);
 //io.set('origins', '*')
 io.configure(function () {
-  io.set('origins', '*');
+ // io.set('origins', '*');
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });
