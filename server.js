@@ -1,7 +1,7 @@
 var express = require('express');
 var cors = require("cors");
 var app = express();
-//app.use(cors());
+app.use(cors());
 var server = require('http').createServer(app).listen(3000);
 var io = require("socket.io").listen(server);
 //allow cross domain requests
