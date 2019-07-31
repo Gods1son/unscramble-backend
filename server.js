@@ -49,13 +49,13 @@ var usernamesList = {};
 
 function findOnline(userK){
     var user;
-    Object.keys(usernamesList).forEach(function(key) {
+    /*Object.keys(usernamesList).forEach(function(key) {
       if(usernamesList[key].isPlaying == false && key != userK){
             user = key;
             return false;
         }
-    });
-    return user;
+    });*/
+    return userK;
 }
 
 // rooms which are currently available in chat
