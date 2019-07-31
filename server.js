@@ -85,8 +85,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('inviteUser', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
 		if(usernamesList[data]["isPlaying"] == false){
-	            var socketId = usernamesList[data]["id"]
-		    io.sockets.socket(socketId).emit('sendInvitation', socket.username);
+	            var socketId = usernamesList[data]["id"];
+		    usernamesList[data]["id"].emit('sendInvitation', socket.username);
+		    //io.sockets.socket(socketId).emit('sendInvitation', socket.username);
 		    //socket.emit('sendInvitation', socket.username);
 		}else{
 		    socket.emit('invitationError', false);
