@@ -73,7 +73,7 @@ io.sockets.on('connection', function (socket) {
 		     currentUser = username;
 		     var obj = {};
 		     obj.online = true;
-             obj.isPlaying = false;
+                     obj.isPlaying = false;
 		     usernamesList[currentUser] = obj; 
 		     socket.emit('welcomeHere', success, username);
 		}else{
@@ -86,12 +86,11 @@ io.sockets.on('connection', function (socket) {
     //send invitation
     socket.on('inviteUser', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
-        if(usernamesList[data]["isPlaying"] == false){
-            socket.emit('sendInvitation', currentUser);
-        }else{
-            socket.emit('invitationError', false);
-        }
-		
+		if(usernamesList[data]["isPlaying"] == false){
+		    socket.emit('sendInvitation', currentUser);
+		}else{
+		    socket.emit('invitationError', false);
+		}	
 	});
     
     //Find online users
@@ -210,7 +209,7 @@ io.sockets.on('connection', function (socket) {
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
 		    //delete user from userlist
-		    delete usernamesList[name];
+		    delete usernamesList[currentUser];
 		
 	});
 });
