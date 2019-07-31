@@ -6,7 +6,7 @@ var port = process.env.PORT || 80;
 var server = require('http').createServer(app);
 var io = require("socket.io")(server);
 //allow cross domain requests
-io.set("transports", ["websocket"]);
+//io.set("transports", ["websocket"]);
 
 //var port = process.env.PORT || 80; 
 var pg = require('pg');
