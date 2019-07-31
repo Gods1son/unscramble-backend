@@ -2,10 +2,19 @@ var express = require('express');
 //var cors = require("cors");
 var app = express();
 var server = require('http').createServer(app);
-var socketio = require('socket.io');
-//var io = require('socket.io')(server);
-//io.set('origins', '*:*');
+var io = require("socket.io")(server, {
+    handlePreflightRequest: (req, res) => {
+        const headers = {
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
+            "Access-Control-Allow-Credentials": true
+        };
+        res.writeHead(200, headers);
+        res.end();
+    }
+});
 
+/*
 app.use(function(req, res, next) {
 	
 	//res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:52134');
@@ -19,14 +28,13 @@ app.use(function(req, res, next) {
   } else {
     return next();
   }
-});
+});*/
 
 var port = process.env.PORT || 80; 
 var pg = require('pg');
 
 //app.use(cors());
-var io = socketio.listen(server, {log:false, origins:'*:*'});
-//server.listen(port);
+server.listen(port);
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
