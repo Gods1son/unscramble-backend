@@ -6,7 +6,7 @@ var port = process.env.PORT || 3000;
 //var server = require('http').createServer();
 var server = app.listen(port);
 var io = require("socket.io").listen(server);
-
+io.set("transports", ["websocket"]);
 
 //var port = process.env.PORT || 80;
 //var server = require('http').createServer(app);
