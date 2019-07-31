@@ -2,7 +2,7 @@ var express = require('express');
 var cors = require("cors");
 var app = express();
 app.use(cors());
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 80;
 var server = require('http').createServer(app);
 var io = require("socket.io")(server);
 //allow cross domain requests
@@ -12,7 +12,7 @@ io.set("transports", ["websocket"]);
 var pg = require('pg');
 
 
-server.listen(port);
+//server.listen(port);
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
@@ -205,4 +205,4 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
-//server.listen(port);
+server.listen(port);
