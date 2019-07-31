@@ -7,13 +7,12 @@ var io = require('socket.io')(server);
 var port = process.env.PORT || 80; 
 var pg = require('pg');
 server.listen(port);
-//io.set('origins', '*')
 /*io.configure(function () {
- // io.set('origins', '*');
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });*/
 app.use(express.static('public'));
+
 // Add headers
 app.use(function (req, res, next) {
 
@@ -28,6 +27,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
 	next();
 });
+
  app.get('/', function(req, res, next) {
 	res.render('index'); 
  })
@@ -50,25 +50,58 @@ app.use(function (req, res, next) {
 
 var usernamesList = {};
 
+function findOnline(userK){
+    var user;
+    $.each(usernamesList, function (key, valueObj) {
+        if(valueObj.isPlaying == false && key != userK){
+            user = key;
+            return false;
+        }
+    });
+    return user;
+}
+
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
 var roomName2;
 io.sockets.on('connection', function (socket) {
-	var name;
+	var currentUser;
 	//register user
 	socket.on('pickUsername', function (username) {
 		var success = true;
 		if(usernamesList[username] == undefined){
-		     name = username;
+		     currentUser = username;
 		     var obj = {};
 		     obj.online = true;
-		     usernamesList[name] = obj; 
+             obj.isPlaying = false;
+		     usernamesList[currentUser] = obj; 
 		     socket.emit('welcomeHere', success, username);
 		}else{
 		     success = false;
 		     socket.emit('welcomeHere', success);
 		}		
 	});
+    
+    
+    //send invitation
+    socket.on('inviteUser', function (data) {
+		// we tell the client to execute 'updatechat' with 2 parameters
+        if(usernamesList[data]["isPlaying"] == false){
+            socket.emit('sendInvitation', currentUser);
+        }else{
+            socket.emit('invitationError', false);
+        }
+		
+	});
+    
+    //Find online users
+    socket.on('findOnlineUsers', function () {
+		  var foundUser = findOnline(currentUser);
+		  socket.emit('foundUsers', foundUser);
+	});
+    
+    
+    
 	// when the client emits 'sendchat', this listens and executes
 	socket.on('sendchat', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
@@ -176,17 +209,8 @@ io.sockets.on('connection', function (socket) {
 
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
-		/*if(socket.room != undefined || socket.room != null){
-		socket.broadcast.to(socket.room).emit('disconnectedUser', socket.username + " has been disconnected");
-		usernamesList[socket.room] = usernamesList[socket.room].replace(socket.username + "<br>", "");	
-		socket.scores += " (disconnected)";
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		}
-		*/
 		    //delete user from userlist
 		    delete usernamesList[name];
 		
 	});
 });
-
