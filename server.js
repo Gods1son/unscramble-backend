@@ -49,8 +49,8 @@ var usernamesList = {};
 
 function findOnline(userK){
     var user;
-    $.each(usernamesList, function (key, valueObj) {
-        if(valueObj.isPlaying == false && key != userK){
+    Object.keys(usernamesList).forEach(function(key) {
+      if(usernamesList[key].isPlaying == false && key != userK){
             user = key;
             return false;
         }
