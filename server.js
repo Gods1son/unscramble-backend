@@ -2,7 +2,8 @@ var express = require('express');
 var cors = require("cors");
 var app = express();
 app.use(cors());
-var server = app.listen(80);
+var server = require('http').createServer();
+server.listen(80);
 var io = require("socket.io").listen(server);
 
 
