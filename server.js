@@ -1,7 +1,7 @@
 var express = require('express');
 var cors = require("cors");
 var app = express();
-app.use(cors());
+app.use(cors()); 
 var port = process.env.PORT || 3000;
 //var server = require('http').createServer();
 var server = app.listen(port);
