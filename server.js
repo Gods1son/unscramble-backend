@@ -34,7 +34,7 @@ var port = process.env.PORT || 80;
 var pg = require('pg');
 
 //app.use(cors());
-server.listen(port);
+
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
@@ -226,3 +226,5 @@ io.sockets.on('connection', function (socket) {
 		
 	});
 });
+
+server.listen(port);
