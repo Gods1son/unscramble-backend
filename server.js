@@ -1,5 +1,5 @@
 var express = require('express');
-//var cors = require("cors");
+var cors = require("cors");
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
@@ -20,7 +20,7 @@ app.use(function(req, res, next) {
 var port = process.env.PORT || 80; 
 var pg = require('pg');
 
-//app.use(cors());
+app.use(cors());
   
 server.listen(port);
 /*io.configure(function () {
