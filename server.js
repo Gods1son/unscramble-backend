@@ -1,42 +1,33 @@
 var express = require('express');
-var cors = require("cors");
+//var cors = require("cors");
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+io.set('origins', '*:*');
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Expose-Headers', 'Content-Length');
+  res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
+  if (req.method === 'OPTIONS') {
+    return res.send(200);
+  } else {
+    return next();
+  }
+});
 var port = process.env.PORT || 80; 
 var pg = require('pg');
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-}
-app.use(cors());
-app.configure(function() {
-    app.use(allowCrossDomain);
-    //some other code
-});  
+
+//app.use(cors());
+  
 server.listen(port);
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
   io.set("polling duration", 10);
 });*/
 app.use(express.static('public'));
-
-// Add headers
-app.use(function (req, res, next) {
-  
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-	next();
-});
 
  app.get('/', function(req, res, next) {
 	res.render('index'); 
