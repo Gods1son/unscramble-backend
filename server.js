@@ -2,9 +2,13 @@ var express = require('express');
 var cors = require("cors");
 var app = express();
 app.use(cors());
-var port = process.env.PORT || 80;
-var server = require('http').createServer(app);
-var io = require("socket.io")(server);
+var server = app.listen(80);
+var io = require("socket.io").listen(server);
+
+
+//var port = process.env.PORT || 80;
+//var server = require('http').createServer(app);
+//var io = require("socket.io")(server);
 //allow cross domain requests
 //io.set("transports", ["websocket"]);
 
@@ -205,4 +209,4 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
-server.listen(port);
+//server.listen(port);
