@@ -91,7 +91,7 @@ io.sockets.on('connection', function (socket) {
 	});
     
     //Find online users
-    socket.on('findOnlineUsers', function () {
+    socket.on('findOnlineUsers', function (data) {
 		  var foundUser = findOnline(currentUser);
 		  socket.emit('foundUsers', foundUser);
 	});
