@@ -49,12 +49,12 @@ var usernamesList = {};
 
 function findOnline(userK){
     var user;
-    /*Object.keys(usernamesList).forEach(function(key) {
+   Object.keys(usernamesList).forEach(function(key) {
       if(usernamesList[key].isPlaying == false && key != userK){
             user = key;
             return false;
         }
-    });*/
+    });
     return userK;
 }
 
@@ -71,8 +71,9 @@ io.sockets.on('connection', function (socket) {
 		     var obj = {};
 		     obj.online = true;
                      obj.isPlaying = false;
+		     obj.id = socket.id;
 		     usernamesList[socket.username] = obj; 
-		     socket.emit('welcomeHere', success, username);
+		     socket.emit('welcomeHere', success, obj);
 		}else{
 		     success = false;
 		     socket.emit('welcomeHere', success);
@@ -84,7 +85,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('inviteUser', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
 		if(usernamesList[data]["isPlaying"] == false){
-		    socket.emit('sendInvitation', socket.username);
+	            var socketId = usernamesList[data]["id"]
+		    io.sockets.socket(socketId).emit('sendInvitation', socket.username);
+		    //socket.emit('sendInvitation', socket.username);
 		}else{
 		    socket.emit('invitationError', false);
 		}	
