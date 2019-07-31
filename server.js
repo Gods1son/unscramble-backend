@@ -1,39 +1,16 @@
 var express = require('express');
-//var cors = require("cors");
+var cors = require("cors");
 var app = express();
-var server = require('http').createServer(app);
-var io = require("socket.io")(server, {
-    handlePreflightRequest: (req, res) => {
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": 'http://127.0.0.1:52134' || "*", //req.headers.origin, //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
-    }
-});
+//app.use(cors());
+var server = require('http').createServer(app).listen(3000);
+var io = require("socket.io").listen(server);
+//allow cross domain requests
+io.set("transports", ["websocket"]);
 
-/*
-app.use(function(req, res, next) {
-	
-	//res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:52134');
-	res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  res.header('Access-Control-Expose-Headers', 'Content-Length');
-  res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
-  if (req.method === 'OPTIONS') {
-    return res.send(200);
-  } else {
-    return next();
-  }
-});*/
-
-var port = process.env.PORT || 80; 
+//var port = process.env.PORT || 80; 
 var pg = require('pg');
 
-//app.use(cors());
+
 
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
@@ -77,7 +54,7 @@ function findOnline(userK){
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
 var roomName2;
-io.sockets.on('connection', function (socket) {
+io.on('connection', function (socket) {
 	var currentUser;
 	//register user
 	socket.on('pickUsername', function (username) {
