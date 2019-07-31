@@ -54,7 +54,7 @@ function findOnline(userK){
 // rooms which are currently available in chat
 var rooms = ['room1','room2','room3'];
 var roomName2;
-io.on('connection', function (socket) {
+io.sockets.on('connection', function (socket) {
 	var currentUser;
 	//register user
 	socket.on('pickUsername', function (username) {
