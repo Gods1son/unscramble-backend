@@ -1,11 +1,11 @@
 var express = require('express');
-//var cors = require("cors");
+var cors = require("cors");
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 80; 
 var pg = require('pg');
-//app.use(cors());
+app.use(cors());
 server.listen(port);
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
@@ -15,7 +15,7 @@ app.use(express.static('public'));
 
 // Add headers
 app.use(function (req, res, next) {
-  /*
+  
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
     // Request methods you wish to allow
@@ -25,7 +25,7 @@ app.use(function (req, res, next) {
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', true);
-	next();*/
+	next();
 });
 
  app.get('/', function(req, res, next) {
@@ -70,11 +70,11 @@ io.sockets.on('connection', function (socket) {
 	socket.on('pickUsername', function (username) {
 		var success = true;
 		if(usernamesList[username] == undefined){
-		     currentUser = username;
+		     socket.username = username;
 		     var obj = {};
 		     obj.online = true;
                      obj.isPlaying = false;
-		     usernamesList[currentUser] = obj; 
+		     usernamesList[socket.username] = obj; 
 		     socket.emit('welcomeHere', success, username);
 		}else{
 		     success = false;
@@ -87,7 +87,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('inviteUser', function (data) {
 		// we tell the client to execute 'updatechat' with 2 parameters
 		if(usernamesList[data]["isPlaying"] == false){
-		    socket.emit('sendInvitation', currentUser);
+		    socket.emit('sendInvitation', socket.username);
 		}else{
 		    socket.emit('invitationError', false);
 		}	
@@ -209,7 +209,7 @@ io.sockets.on('connection', function (socket) {
 	// when the user disconnects.. perform this
 	socket.on('disconnect', function(){
 		    //delete user from userlist
-		    delete usernamesList[currentUser];
+		    delete usernamesList[socket.username];
 		
 	});
 });
