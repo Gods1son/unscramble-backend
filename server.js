@@ -1,6 +1,7 @@
 var express = require('express');
 //var cors = require("cors");
 var app = express();
+var server = require('http').createServer(app);
 var socketio = require('socket.io');
 //var io = require('socket.io')(server);
 //io.set('origins', '*:*');
@@ -19,12 +20,12 @@ app.use(function(req, res, next) {
     return next();
   }
 });
-var server = require('http').createServer(app);
+
 var port = process.env.PORT || 80; 
 var pg = require('pg');
 
 //app.use(cors());
-io = socketio.listen(server, {log:false, origins:'*:*'});
+var io = socketio.listen(server, {log:false, origins:'*:*'});
 //server.listen(port);
 /*io.configure(function () {
   io.set("transports", ["xhr-polling"]);
