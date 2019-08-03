@@ -4,18 +4,12 @@ var app = express();
 app.use(cors()); 
 var port = process.env.PORT || 3000;
 //var server = require('http').createServer();
-var server = app.listen(port);
-var io = require("socket.io").listen(server);
-//io.set("transports", ["websocket"]);
-
-//var port = process.env.PORT || 80;
-//var server = require('http').createServer(app);
-//var io = require("socket.io")(server);
-//allow cross domain requests
-//io.set("transports", ["websocket"]);
-
-//var port = process.env.PORT || 80; 
 var pg = require('pg');
+var checkWord = require('check-word'),
+ words = checkWord('en');
+
+
+ 
 
 
 //server.listen(port);
@@ -55,166 +49,212 @@ function findOnline(userK){
             return false;
         }
     });
-    return userK;
+    return user;
 }
 
-// rooms which are currently available in chat
-var rooms = ['room1','room2','room3'];
-var roomName2;
-io.sockets.on('connection', function (socket) {
-	var currentUser;
-	//register user
-	socket.on('pickUsername', function (username) {
-		var success = true;
-		if(usernamesList[username] == undefined){
-		     socket.username = username;
-		     var obj = {};
-		     obj.online = true;
-                     obj.isPlaying = false;
-		     obj.id = socket.id;
-		     usernamesList[socket.username] = obj; 
-		     socket.emit('welcomeHere', success, obj);
-		}else{
-		     success = false;
-		     socket.emit('welcomeHere', success);
-		}		
-	});
-    
-    
-    //send invitation
-    socket.on('inviteUser', function (data) {
-		// we tell the client to execute 'updatechat' with 2 parameters
-		if(usernamesList[data]["isPlaying"] == false){
-	            var socketId = usernamesList[data]["id"];
-			
-		   io.to(socketId).emit("sendInvitation", socket.username);
-		   // usernamesList[data].emit('sendInvitation', socket.username);
-		    //io.sockets.socket(socketId).emit('sendInvitation', socket.username);
-		    //socket.emit('sendInvitation', socket.username);
-		}else{
-		    socket.emit('invitationError', false);
-		}	
-	});
-    
-    //Find online users
-    socket.on('findOnlineUsers', function (data) {
-		  var foundUser = findOnline(socket.username);
-		  socket.emit('foundUsers', foundUser);
-	});
-    
-    
-    
-	// when the client emits 'sendchat', this listens and executes
-	socket.on('sendchat', function (data) {
-		// we tell the client to execute 'updatechat' with 2 parameters
-		io.sockets.in(socket.room).emit('updatechat', socket.username, data);
-	});
+//var server = app.listen(port);
+//var io = require("socket.io").listen(server);
 
-	socket.on('switchRoom', function(newroom){
-		// leave the current room (stored in session)
-		socket.leave(socket.room);
-		// join new room, received as function parameter
-		socket.join(newroom);
-		socket.emit('updatechat', 'SERVER', 'you have connected to '+ newroom);
-		// sent message to OLD room
-		socket.broadcast.to(socket.room).emit('updatechat', 'SERVER', socket.username+' has left this room');
-		// update socket session room title
-		socket.room = newroom;
-		socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username+' has joined this room');
-		//socket.emit('updaterooms', rooms, newroom);
-	});
-	
-	socket.on('createRoom',function(roomName){
-		if(rooms.indexOf(roomName) == -1){
-		rooms.push(roomName);
-		socket.room = roomName;
-		socket.join(roomName);
-		roomName2 = roomName + roomName;
-		socket.emit('roomCreated',roomName + ' room has been created');
-		//usernamesList[socket.room][socket.username] = socket.username;
-		//usernamesList.roomName.(socket.username) = (socket.username);
-		//socket.allUsers.push(socket.username);
-		//socket.emit('allUsers', socket.allUsers);
-		usernamesList[socket.room] = "";
-		usernamesList[roomName2] = "";
-		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>";
-		usernamesList[socket.room] += socket.username + "<br>";
-		
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);		
-		io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
-		}else{socket.emit('roomCreatedError',roomName + ' has already been chosen')}
-	})
+//server
+var server = app.listen(port);
+var io = require('socket.io').listen(server);
 
-	socket.on('joinRoom',function(roomName){
-		socket.room = roomName;
-		socket.join(roomName);
-		roomName2 = roomName + roomName;
-		socket.emit('roomJoined',roomName + ' room has been joined');
-		usernamesList[roomName2] += "<span id='" + socket.username + "'>" + socket.username + " score = " + socket.scores + "</span>";
-		//usernamesList[socket.room][socket.username] = socket.username;
-		//socket.allUsers.push(socket.username);
-		
-		usernamesList[socket.room] += socket.username + "<br>";
-		io.sockets.in(socket.room).emit('allUsers', usernamesList[socket.room]);
-		socket.broadcast.to(socket.room).emit('requestScores');
-		//io.sockets.in(socket.room).emit('startScores',usernamesList[roomName2]);
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
-	})
-	
-	//for sharing scores
-	socket.on('shareScores',function(){
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-	})
-	
-	socket.on('sendShuffledWord',function(newWord, originalWord){
-		var d = new Date();
-		var n = d.toLocaleTimeString();
-		var theword = newWord;
-		var player = "i just played";
-		socket.emit('newWord3',socket.username + "'s QUESTION is -- ",newWord, socket.room, player);
-		socket.broadcast.to(socket.room).emit('newWord',theword, socket.username + "'s QUESTION is -- " , socket.room, originalWord);
-		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-	})
-	
-	socket.on('sendMyGuess',function(newWord, result){
-		var d = new Date();
-		var n = d.toLocaleTimeString();
-		//socket.emit('newWord', newWord);
-		//socket.broadcast.to(roomName2).emit('newWord', newWord);
-		io.sockets.in(socket.room).emit('newWord2',socket.username + "'s ANSWER => " + newWord + " ",result,socket.room);
-		if(result == "pass"){
-		socket.scores += 1;
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		//io.sockets.in(socket.room).emit('updateScoresCorrect',socket.username + " correct" + " = " + socket.scores["correct"]);
-		}else if(result == "fail"){
-		socket.scores -= 1;
-		//io.sockets.in(socket.room).emit('updateScoresIncorrect',socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-		}
-		//io.sockets.in(socket.room).emit('updateScores',socket.username + " correct" + " = " + socket.scores["correct"],socket.username + " incorrect" + " = " + socket.scores["incorrect"]);
-	})
-	
-	socket.on('giveHint', function(hint){
-		var d = new Date();
-		var n = d.toLocaleTimeString();
-		io.sockets.in(socket.room).emit('sharedHint',socket.username + "'s MSG -- " + hint + " ");
-	})
-	
-	//user passed
-	socket.on('passed', function(pass){
-		socket.scores -= 1;
-		io.sockets.in(socket.room).emit('passing',socket.username + pass);
-		io.sockets.in(socket.room).emit('updateScores',socket.username,socket.username + " score = " + socket.scores);
-	})
-	
+try {
+    io.sockets.on('connection', function (socket) {
+        //console.log("connect");
+        /*socket.on("createNewUser", function(user){
 
-	// when the user disconnects.. perform this
-	socket.on('disconnect', function(){
-		    //delete user from userlist
-		    delete usernamesList[socket.username];
-		
-	});
-});
+        })
 
-//server.listen(port);
+        socket.on('pickUsername', function (username) {
+            socket.username = username;
+            socket.emit('welcomeHere', username);		
+        });
+
+        socket.on('getSyn', function (word) {
+            var words = moby.search(word);
+            socket.emit('theSyns', words);		
+        });
+
+        socket.on("getAvailableplayers", function(){
+            var play = [];
+            allPlayers.forEach(function(player,index){
+                if(player["isOnline"] == true && player["isPlaying"] == false){
+                    play.push(player);
+                }
+            })
+            socket.emit('availablePlayers', play);
+        })*/
+        var currentUser;
+        //register user
+        socket.on('pickUsername', function (username) {
+            var success = true;
+            if(usernamesList[username] == undefined){
+                 socket.username = username;
+                 var obj = {};
+                 obj.online = true;
+                         obj.isPlaying = false;
+                 obj.id = socket.id;
+                 usernamesList[username] = obj; 
+                 socket.emit('welcomeHere', success, obj);
+            }else{
+                 success = false;
+                 socket.emit('welcomeHere', success);
+            }		
+        });
+
+
+        //Find online users
+        socket.on('findOnlineUsers', function (data) {
+              var foundUser = findOnline(socket.username);
+              socket.emit('foundUsers', foundUser);
+        });
+
+        //send invitation
+        socket.on('inviteUser', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+            if(usernamesList[data]["isPlaying"] == false){
+                    var socketId = usernamesList[data]["id"];
+                    var roomName = socket.username + data;
+                     socket.room = roomName;
+                    socket.join(roomName);
+                var currsocketId = usernamesList[socket.username]["id"];
+               io.to(socketId).emit("sendInvitation", socket.username);
+                io.to(currsocketId).emit("invitationSent", socket.username);
+            }else{
+                socket.emit('invitationError', false);
+            }	
+        });
+        
+        //invite friend
+        socket.on('inviteFriend', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+                    var roomName = socket.username + "Created";
+                     socket.room = roomName;
+                    socket.join(roomName);
+                    var currsocketId = usernamesList[socket.username]["id"];
+                    io.to(currsocketId).emit("roomCreated", socket.username);	
+        });
+        
+        //Accept friend invitation
+        socket.on('acceptFriendInvitation', function (data) {
+              var roomName = data;
+              socket.room = roomName;
+              socket.join(roomName);
+            //join users
+            var info = {};
+            info.groupName = roomName;
+            data = data.replace("Created","");
+            if(usernamesList[data] != undefined){
+            if(usernamesList[data]["isPlaying"] == true){
+                    var socketId = usernamesList[socket.username]["id"];
+                    io.to(socketId).emit("userCurrentlyPlaying", "User is playing a game now, try later");
+                }else{
+                    info.player1 = data;
+                    info.player1Score = 0;
+                    info.player2 = socket.username;
+                    info.player2Score = 0;
+                    usernamesList[data]["isPlaying"] = true;
+                    usernamesList[socket.username]["isPlaying"] = true;
+                      io.sockets.in(socket.room).emit('joinedGroup', info);
+                } 
+            }else{
+                io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
+            }
+        });
+
+         //Accept invitation
+        socket.on('acceptInvitation', function (data) {
+              var roomName = data + socket.username;
+              socket.room = roomName;
+              socket.join(roomName);
+            //join users
+            var info = {};
+            info.groupName = roomName;
+            info.player1 = data;
+            info.player1Score = 0;
+            info.player2 = socket.username;
+            info.player2Score = 0;
+            if(usernamesList[data] != undefined){
+                usernamesList[data]["isPlaying"] = true;
+                usernamesList[socket.username]["isPlaying"] = true;
+                  io.sockets.in(socket.room).emit('joinedGroup', info);
+            }
+        });
+
+        // check if word exists
+        socket.on('checkWord', function(data){
+                var res = words.check(data);
+                socket.emit('RescheckWord', res);
+
+        });
+
+        //receive and send word
+        socket.on("sendWord", function(data){
+            var rec = data.receiver;
+            var socketId = usernamesList[rec]["id"];
+            io.sockets.in(socket.room).emit('receiveWord', data);
+            //io.to(socketId).emit("receiveWord", data);
+        })
+
+        //send report card
+        socket.on("markAnswer", function (data){
+            io.sockets.in(socket.room).emit('reportCard', data);
+        })
+
+        // when the user disconnects.. perform this
+        socket.on('disconnect', function(){
+                //delete user from userlist
+            
+            io.of('/').in(socket.room).clients(function(error, clients) {
+                if (clients.length > 0) {
+                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
+                   // console.log('clients in the room: \n');
+                   // console.log(clients);
+                    clients.forEach(function (socket_id) {
+                        var username = getKeyByValue(usernamesList, socket_id);
+                        usernamesList[username]["isPlaying"] = false;
+                        io.sockets.sockets[socket_id].leave(socket.room);
+                    });
+                }
+            });
+                delete usernamesList[socket.username];
+
+        });
+        
+        //send invitation rejection
+        socket.on("rejectInvitation", function(data){
+            var us = data.user;
+            var socketId = usernamesList[us]["id"];
+            io.to(socketId).emit("sendRejection", data);
+        })
+        
+        //delete room and members
+        socket.on("deleteRoom", function(data){
+            /*if(socket.room != null || socket.room != undefined || socket.room != ""){
+                socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room will be closed');
+                var users = io.sockets.clients(socket.room);
+                for(var i = 0; i < users.length; i++){
+                    users[i].leave(socket.room);
+                };
+            }*/
+            
+            io.of('/').in(socket.room).clients(function(error, clients) {
+                if (clients.length > 0) {
+                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room will be closed');
+                    //console.log('clients in the room: \n');
+                    //console.log(clients);
+                    clients.forEach(function (socket_id) {
+                        var username = getKeyByValue(usernamesList, socket_id);
+                        usernamesList[username]["isPlaying"] = false;
+                        io.sockets.sockets[socket_id].leave(socket.room);
+                    });
+                }
+            });
+        })
+
+    })
+}catch(err){
+    socket.emit("serverError", "System Error");
+}
