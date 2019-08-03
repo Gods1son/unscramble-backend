@@ -139,27 +139,35 @@ try {
                      socket.room = roomName;
                     socket.join(roomName);
                     var currsocketId = usernamesList[socket.username]["id"];
+		    usernamesList[socket.username]["roomName"] = roomName;
                     io.to(currsocketId).emit("roomCreated", socket.username);	
         });
         
         //Accept friend invitation
-        socket.on('acceptFriendInvitation', function (data) {
-              var roomName = data;
-              socket.room = roomName;
-              socket.join(roomName);
+        socket.on('acceptFriendInvitation', function (dataOr) {
+              
             //join users
             var info = {};
-            info.groupName = roomName;
-            data = data.replace("Created","");
+            
+            var data = dataOr.replace("Created","");
             if(usernamesList[data] != undefined){
+                if(usernamesList[data]["roomName"] == undefined){
+                    var socketId = usernamesList[socket.username]["id"];
+                    io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
+                    return;
+                }
             if(usernamesList[data]["isPlaying"] == true){
                     var socketId = usernamesList[socket.username]["id"];
                     io.to(socketId).emit("userCurrentlyPlaying", "User is playing a game now, try later");
                 }else{
+                    var roomName = dataOr;
+                    socket.room = roomName;
+                    socket.join(roomName);
                     info.player1 = data;
                     info.player1Score = 0;
                     info.player2 = socket.username;
                     info.player2Score = 0;
+                    info.groupName = roomName;
                     usernamesList[data]["isPlaying"] = true;
                     usernamesList[socket.username]["isPlaying"] = true;
                       io.sockets.in(socket.room).emit('joinedGroup', info);
