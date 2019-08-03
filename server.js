@@ -52,6 +52,11 @@ function findOnline(userK){
     return user;
 }
 
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key]["id"] === value);
+}
+
+
 //var server = app.listen(port);
 //var io = require("socket.io").listen(server);
 
