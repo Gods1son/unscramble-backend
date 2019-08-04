@@ -5,8 +5,9 @@ app.use(cors());
 var port = process.env.PORT || 3000;
 //var server = require('http').createServer();
 var pg = require('pg');
-var checkWord = require('check-word'),
- words = checkWord('en');
+var thesaurus = require("thesaurus");
+//var checkWord = require('check-word'),
+// words = checkWord('en');
 
 
  
@@ -139,7 +140,7 @@ try {
                      socket.room = roomName;
                     socket.join(roomName);
                     var currsocketId = usernamesList[socket.username]["id"];
-		    usernamesList[socket.username]["roomName"] = roomName;
+                    usernamesList[socket.username]["roomName"] = roomName;
                     io.to(currsocketId).emit("roomCreated", socket.username);	
         });
         
@@ -153,7 +154,7 @@ try {
                     io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
                     return;
             }
-		
+            
             var data = dataOr.replace("Created","");
             if(usernamesList[data] != undefined){
                 if(usernamesList[data]["roomName"] == undefined){
@@ -178,7 +179,7 @@ try {
                       io.sockets.in(socket.room).emit('joinedGroup', info);
                 } 
             }else{
-		 var socketId = usernamesList[socket.username]["id"];
+                var socketId = usernamesList[socket.username]["id"];
                 io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
             }
         });
@@ -204,8 +205,12 @@ try {
 
         // check if word exists
         socket.on('checkWord', function(data){
-                var res = words.check(data);
-                socket.emit('RescheckWord', res);
+                var prd = thesaurus.find(data);
+                var res = prd.length > 0 ? true : false;
+                if(res){
+                    prd = prd.slice(0,4);
+                }
+                socket.emit('RescheckWord', res, prd);
 
         });
 
