@@ -59,7 +59,7 @@ function getKeyByValue(object, value) {
 
 app.get("/joinGroup", function (req, res){
     var group = req.query.groupName;
-    var url = "edjufununscramble://multiplayer.html?groupName=" + group;
+    var url = "edjufununscramble://?groupName=" + group;
     console.log(url);
     res.redirect(301, url);
 })
