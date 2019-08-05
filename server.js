@@ -125,6 +125,11 @@ try {
         //send invitation
         socket.on('inviteUser', function (data) {
             // we tell the client to execute 'updatechat' with 2 parameters
+            if(usernamesList[data] == undefined){
+                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    return;
+                }
+            
             if(usernamesList[data]["isPlaying"] == false){
                     
                 if(usernamesList[socket.username] == undefined){
@@ -269,6 +274,10 @@ try {
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
             var us = data.user;
+            if(usernamesList[us] == undefined){
+                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    return;
+                }
             var socketId = usernamesList[us]["id"];
             io.to(socketId).emit("sendRejection", data);
         })
@@ -300,4 +309,5 @@ try {
     })
 }catch(err){
     socket.emit("serverError", "System Error");
+}
 }
