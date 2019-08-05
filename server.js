@@ -120,7 +120,12 @@ try {
         socket.on('inviteUser', function (data) {
             // we tell the client to execute 'updatechat' with 2 parameters
             if(usernamesList[data]["isPlaying"] == false){
-                    var socketId = usernamesList[data]["id"];
+                    
+                if(usernamesList[socket.username] == undefined){
+                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    return;
+                }
+                var socketId = usernamesList[data]["id"];
                     var roomName = socket.username + data;
                      socket.room = roomName;
                     socket.join(roomName);
@@ -136,6 +141,10 @@ try {
         socket.on('inviteFriend', function (data) {
             // we tell the client to execute 'updatechat' with 2 parameters
                     //var socketId = usernamesList[data]["id"];
+            if(usernamesList[socket.username] == undefined){
+                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    return;
+                }
                     var roomName = socket.username + "Created";
                      socket.room = roomName;
                     socket.join(roomName);
@@ -217,6 +226,10 @@ try {
         //receive and send word
         socket.on("sendWord", function(data){
             var rec = data.receiver;
+            if(usernamesList[rec] == undefined){
+                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    return;
+                }
             var socketId = usernamesList[rec]["id"];
             io.sockets.in(socket.room).emit('receiveWord', data);
             //io.to(socketId).emit("receiveWord", data);
