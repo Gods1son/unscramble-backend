@@ -57,6 +57,12 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key]["id"] === value);
 }
 
+app.get("/joinGroup", function (req, res){
+    var group = req.query.groupName;
+    var url = "edjufununscramble://multiplayer.html?groupName=" + group;
+    console.log(url);
+    res.redirect(301, url);
+})
 
 //var server = app.listen(port);
 //var io = require("socket.io").listen(server);
