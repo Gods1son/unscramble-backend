@@ -109,6 +109,21 @@ function SentWordCount(){
   })
 }
 
+function ConnectionCount(){
+     pool.connect()
+  .then(client => {
+    return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 3') // your query string here
+      .then(res => {
+        client.release()
+        //console.log(res.rows[0]) // your callback here
+      })
+      .catch(e => {
+        client.release()
+       // console.log(err.stack) // your callback here
+      })
+  })
+}
+
 app.get("/joinGroup", function (req, res){
     var group = req.query.groupName;
     var url = "edjufununscramble://?groupName=" + group;
@@ -127,29 +142,7 @@ var io = require('socket.io').listen(server);
 try {
     io.sockets.on('connection', function (socket) {
         //console.log("connect");
-        /*socket.on("createNewUser", function(user){
-
-        })
-
-        socket.on('pickUsername', function (username) {
-            socket.username = username;
-            socket.emit('welcomeHere', username);		
-        });
-
-        socket.on('getSyn', function (word) {
-            var words = moby.search(word);
-            socket.emit('theSyns', words);		
-        });
-
-        socket.on("getAvailableplayers", function(){
-            var play = [];
-            allPlayers.forEach(function(player,index){
-                if(player["isOnline"] == true && player["isPlaying"] == false){
-                    play.push(player);
-                }
-            })
-            socket.emit('availablePlayers', play);
-        })*/
+        
         var currentUser;
         //register user
         socket.on('pickUsername', function (username) {
@@ -250,6 +243,7 @@ try {
                     info.groupName = roomName;
                     usernamesList[data]["isPlaying"] = true;
                     usernamesList[socket.username]["isPlaying"] = true;
+                    ConnectionCount();
                       io.sockets.in(socket.room).emit('joinedGroup', info);
                 } 
             }else{
@@ -273,6 +267,7 @@ try {
             if(usernamesList[data] != undefined){
                 usernamesList[data]["isPlaying"] = true;
                 usernamesList[socket.username]["isPlaying"] = true;
+                ConnectionCount();
                   io.sockets.in(socket.room).emit('joinedGroup', info);
             }
         });
