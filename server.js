@@ -18,9 +18,10 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
     ssl:true
 })
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-    ssl:true
+
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err) // your callback here
+  process.exit(-1)
 })
 
 
@@ -68,9 +69,8 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key]["id"] === value);
 }
 
-client.connect();
 function AddUserCount(){
-    var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1';
+    /*var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1';
     //client.connect();
     client.query(que, (err, result) => {
           if (err) {
@@ -79,20 +79,34 @@ function AddUserCount(){
               //var data = {data: result.rows};
               //res.send(data);
           }
-    }) 
+    })*/
+ pool.connect()
+  .then(client => {
+    return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1') // your query string here
+      .then(res => {
+        client.release()
+        //console.log(res.rows[0]) // your callback here
+      })
+      .catch(e => {
+        client.release()
+       // console.log(err.stack) // your callback here
+      })
+  })
 }
 
 function SentWordCount(){
-    var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 2';
-     //client.connect();
-    client.query(que, (err, result) => {
-          if (err) {
-            console.log(err.stack);
-          } else {
-             // var data = {data: result.rows};
-              //res.send(data);
-          }
-    }) 
+     pool.connect()
+  .then(client => {
+    return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 2') // your query string here
+      .then(res => {
+        client.release()
+        //console.log(res.rows[0]) // your callback here
+      })
+      .catch(e => {
+        client.release()
+       // console.log(err.stack) // your callback here
+      })
+  })
 }
 
 app.get("/joinGroup", function (req, res){
