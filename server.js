@@ -331,6 +331,19 @@ try {
             var socketId = usernamesList[us]["id"];
             io.to(socketId).emit("sendRejection", data);
         })
+	    
+	 //update timer for opponent
+        socket.on("opponentTimer", function(data){
+            var us = data.receiver;
+            if(usernamesList[us] == undefined){
+                    socket.emit("userCurrentlyPlaying",  us + " cannot be found online");
+                    return;
+                }
+            if(usernamesList[us] != undefined){
+                var socketId = usernamesList[us]["id"];
+                io.to(socketId).emit("opponentTimerRead", data);
+            }
+        })
         
         //delete room and members
         socket.on("deleteRoom", function(data){
