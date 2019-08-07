@@ -10,7 +10,18 @@ var thesaurus = require("thesaurus");
 // words = checkWord('en');
 
 
- 
+ const { Pool, Client } = require('pg');
+//db con string
+var connString = "postgres://osrxycmzouxcmo:18dcdc487378e530d118a86dddf0e7018198b9286ac4dff3eae7835128cb919a@ec2-174-129-43-40.compute-1.amazonaws.com:5432/daji258u18ftqr";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+    ssl:true
+})
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+    ssl:true
+})
 
 
 //server.listen(port);
@@ -57,6 +68,33 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key]["id"] === value);
 }
 
+client.connect();
+function AddUserCount(){
+    var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1';
+    //client.connect();
+    client.query(que, (err, result) => {
+          if (err) {
+            console.log(err.stack);
+          } else {
+              //var data = {data: result.rows};
+              //res.send(data);
+          }
+    }) 
+}
+
+function SentWordCount(){
+    var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 2';
+     //client.connect();
+    client.query(que, (err, result) => {
+          if (err) {
+            console.log(err.stack);
+          } else {
+             // var data = {data: result.rows};
+              //res.send(data);
+          }
+    }) 
+}
+
 app.get("/joinGroup", function (req, res){
     var group = req.query.groupName;
     var url = "edjufununscramble://?groupName=" + group;
@@ -64,11 +102,12 @@ app.get("/joinGroup", function (req, res){
     res.redirect(301, url);
 })
 
-//var server = app.listen(port);
-//var io = require("socket.io").listen(server);
-
 //server
-var server = app.listen(port);
+var server = app.listen(port, function(){
+    console.log("server started on 3000");
+})
+
+//var io = new SocketServer({ server });
 var io = require('socket.io').listen(server);
 
 try {
@@ -108,6 +147,7 @@ try {
                          obj.isPlaying = false;
                  obj.id = socket.id;
                  usernamesList[username] = obj; 
+                 AddUserCount();
                  socket.emit('welcomeHere', success, obj);
             }else{
                  success = false;
@@ -241,6 +281,7 @@ try {
                     socket.emit("userCurrentlyPlaying", "User cannot be found online");
                     return;
                 }
+            SentWordCount();
             var socketId = usernamesList[rec]["id"];
             io.sockets.in(socket.room).emit('receiveWord', data);
             //io.to(socketId).emit("receiveWord", data);
