@@ -69,17 +69,9 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key]["id"] === value);
 }
 
+//client.connect();
 function AddUserCount(){
-    /*var que = 'UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1';
-    //client.connect();
-    client.query(que, (err, result) => {
-          if (err) {
-            console.log(err.stack);
-          } else {
-              //var data = {data: result.rows};
-              //res.send(data);
-          }
-    })*/
+    
  pool.connect()
   .then(client => {
     return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 1') // your query string here
@@ -94,11 +86,37 @@ function AddUserCount(){
   })
 }
 
-function SentWordCount(){
+function LoginUser(username, socket){
+ pool.connect()
+  .then(client => {
+    client.query('UPDATE "Users" SET "Logins" = "Logins" + 1 WHERE "Username" = $1', [username]) // your query string here
+      .then(res => {
+        client.release();
+        //console.log("logging in");
+        if(usernamesList[username] == undefined){
+                 socket.username = username;
+                 var obj = {};
+                 obj.online = true;
+                 obj.isPlaying = false;
+                 obj.id = socket.id;
+                 usernamesList[username] = obj; 
+                 socket.emit("loggedIn");
+            }
+        
+      })
+      .catch(e => {
+        client.release()
+       // console.log(err.stack) // your callback here
+      })
+  })
+}
+
+function SentWordCount(username){
      pool.connect()
   .then(client => {
-    return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 2') // your query string here
+    client.query('UPDATE "Users" SET "SentWords" = "SentWords" + 1 WHERE "Username" = $1', [username]) // your query string here
       .then(res => {
+            
         client.release()
         //console.log(res.rows[0]) // your callback here
       })
@@ -109,10 +127,68 @@ function SentWordCount(){
   })
 }
 
-function ConnectionCount(){
+function CheckUsername(username, socket){
      pool.connect()
   .then(client => {
-    return client.query('UPDATE "General" SET "Count" = "Count" + 1 WHERE "ID" = 3') // your query string here
+     client.query('Select * FROM "Users" Where "Username" = $1', [username]) // your query string here
+      .then(res => {
+            var rows = res.rows;
+            console.log(rows);
+            client.release();
+            if(rows.length == 0){
+                CreateUsername(username, socket);
+            }else{
+                socket.emit("createUserResult", "Username already chosen, choose another", false);
+            }
+      })
+      .catch(e => {
+        client.release()
+        console.log(e.stack); // your callback here
+         socket.emit("createUserResult", "Error", false);
+      })
+  })
+}
+
+function CreateUsername(username, socket){
+     pool.connect()
+  .then(client => {
+    var que = 'INSERT INTO "Users" ("Connections", "Logins", "SentWords", "Username") VALUES($1, $2, $3, $4) RETURNING *';
+    var val = [0, 1, 0, username];
+     client.query(que, val) // your query string here
+      .then(res => {
+            var rows = res.rows;
+            console.log(rows);
+            
+            if(rows.length > 0){
+                if(usernamesList[username] == undefined){
+                     socket.username = username;
+                     var obj = {};
+                     obj.online = true;
+                     obj.isPlaying = false;
+                     obj.id = socket.id;
+                     usernamesList[username] = obj; 
+                     
+                }
+                var info = {};
+                info.msg = "Username Created";
+                info.name = username;
+                socket.emit("createUserResult", info, true);
+            }
+            client.release();
+        //console.log(res.rows[0]) // your callback here
+      })
+      .catch(e => {
+        client.release()
+        console.log(e.stack) // your callback here
+        socket.emit("createUserResult", "Error", false);
+      })
+  })
+}
+
+function ConnectionCount(data1, data2){
+     pool.connect()
+  .then(client => {
+    return client.query('UPDATE "Users" SET "Connections" = "Connections" + 1 WHERE "Username" = $1 OR "Username" = $2', [data1, data2]) // your query string here
       .then(res => {
         client.release()
         //console.log(res.rows[0]) // your callback here
@@ -126,7 +202,7 @@ function ConnectionCount(){
 
 app.get("/joinGroup", function (req, res){
     var group = req.query.groupName;
-    var url = "edjufununscramble://?groupName=" + group;
+    var url = "edjufununscramble://multiplayer.html?groupName=" + group;
     console.log(url);
     res.redirect(301, url);
 })
@@ -154,13 +230,18 @@ try {
                          obj.isPlaying = false;
                  obj.id = socket.id;
                  usernamesList[username] = obj; 
-                 AddUserCount();
+                 //AddUserCount();
                  socket.emit('welcomeHere', success, obj);
             }else{
                  success = false;
                  socket.emit('welcomeHere', success);
             }		
         });
+        
+        //log in
+        socket.on("Login", function(data){
+            LoginUser(data, socket);
+        })
 
 
         //Find online users
@@ -243,7 +324,7 @@ try {
                     info.groupName = roomName;
                     usernamesList[data]["isPlaying"] = true;
                     usernamesList[socket.username]["isPlaying"] = true;
-                    ConnectionCount();
+                    ConnectionCount(data, socket.username);
                       io.sockets.in(socket.room).emit('joinedGroup', info);
                 } 
             }else{
@@ -267,10 +348,16 @@ try {
             if(usernamesList[data] != undefined){
                 usernamesList[data]["isPlaying"] = true;
                 usernamesList[socket.username]["isPlaying"] = true;
-                ConnectionCount();
+                ConnectionCount(data, socket.username);
                   io.sockets.in(socket.room).emit('joinedGroup', info);
             }
         });
+        
+        //create new user
+        socket.on("createUsername", function(data){
+            CheckUsername(data, socket);
+            //console.log(user);
+        })
 
         // check if word exists
         socket.on('checkWord', function(data){
@@ -290,7 +377,7 @@ try {
                     socket.emit("userCurrentlyPlaying", "User cannot be found online");
                     return;
                 }
-            SentWordCount();
+            SentWordCount(socket.username);
             var socketId = usernamesList[rec]["id"];
             io.sockets.in(socket.room).emit('receiveWord', data);
             //io.to(socketId).emit("receiveWord", data);
@@ -325,14 +412,14 @@ try {
         socket.on("rejectInvitation", function(data){
             var us = data.user;
             if(usernamesList[us] == undefined){
-                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                    socket.emit("userCurrentlyPlaying", us + " cannot be found online");
                     return;
                 }
             var socketId = usernamesList[us]["id"];
             io.to(socketId).emit("sendRejection", data);
         })
-	    
-	 //update timer for opponent
+        
+        //update timer for opponent
         socket.on("opponentTimer", function(data){
             var us = data.receiver;
             if(usernamesList[us] == undefined){
@@ -373,4 +460,3 @@ try {
 }catch(err){
     socket.emit("serverError", "System Error");
 }
-
