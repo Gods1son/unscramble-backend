@@ -92,7 +92,7 @@ function LoginUser(username, socket){
     client.query('UPDATE "Users" SET "Logins" = "Logins" + 1 WHERE "Username" = $1', [username]) // your query string here
       .then(res => {
         client.release();
-        //console.log("logging in");
+        console.log(username);
         if(usernamesList[username] == undefined){
                  socket.username = username;
                  var obj = {};
@@ -127,22 +127,61 @@ function SentWordCount(username){
   })
 }
 
-function CheckUsername(username, socket){
+function CheckUsername(username, type, socket){
+    
+    var checkName = "";
+    if(type == "createnew"){
+        checkName = username;
+    }
+    if(type == "updateold"){
+        checkName = username.newName;
+    }
+    
      pool.connect()
   .then(client => {
-     client.query('Select * FROM "Users" Where "Username" = $1', [username]) // your query string here
+     client.query('Select * FROM "Users" Where "Username" = $1', [checkName]) // your query string here
       .then(res => {
             var rows = res.rows;
             console.log(rows);
             client.release();
             if(rows.length == 0){
-                CreateUsername(username, socket);
+                if(type == "createnew"){
+                   CreateUsername(checkName, socket); 
+                }
+                if(type == "updateold"){
+                   UpdateUserName(username, socket); 
+                }
+                
             }else{
                 socket.emit("createUserResult", "Username already chosen, choose another", false);
             }
       })
       .catch(e => {
         client.release()
+        console.log(e.stack); // your callback here
+         socket.emit("createUserResult", "Error", false);
+      })
+  })
+}
+
+function UpdateUserName(username, socket){
+    var oldName = username.oldName;
+    var newName = username.newName;
+ pool.connect()
+  .then(client => {
+    client.query('UPDATE "Users" SET "Username" = $1 WHERE "Username" = $2', [newName, oldName]) // your query string here
+      .then(res => {
+        client.release();
+        //console.log("logging in");
+        if(usernamesList[username.oldName] != undefined){
+            usernamesList[username.newName] = usernamesList[username.oldName];    
+            delete usernamesList[username.oldName];
+                 socket.emit("usernameUpdatePass", username);
+            }
+        
+      })
+      .catch(e => {
+       client.release()
         console.log(e.stack); // your callback here
          socket.emit("createUserResult", "Error", false);
       })
@@ -157,7 +196,8 @@ function CreateUsername(username, socket){
      client.query(que, val) // your query string here
       .then(res => {
             var rows = res.rows;
-            console.log(rows);
+            //client.release();
+            //console.log(rows);
             
             if(rows.length > 0){
                 if(usernamesList[username] == undefined){
@@ -241,6 +281,11 @@ try {
         //log in
         socket.on("Login", function(data){
             LoginUser(data, socket);
+        })
+        
+        //update username
+        socket.on("updateUsername", function(data){
+            CheckUsername(data, "updateold", socket);
         })
 
 
@@ -355,7 +400,7 @@ try {
         
         //create new user
         socket.on("createUsername", function(data){
-            CheckUsername(data, socket);
+            CheckUsername(data, "createnew", socket);
             //console.log(user);
         })
 
