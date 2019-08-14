@@ -12,7 +12,7 @@ var thesaurus = require("thesaurus");
 
  const { Pool, Client } = require('pg');
 //db con string
-var connString = "postgres://osrxycmzouxcmo:18dcdc487378e530d118a86dddf0e7018198b9286ac4dff3eae7835128cb919a@ec2-174-129-43-40.compute-1.amazonaws.com:5432/daji258u18ftqr";
+
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -54,10 +54,10 @@ app.use(express.static('public'));
 
 var usernamesList = {};
 
-function findOnline(userK){
+function findOnline(userK, denied){
     var user;
    Object.keys(usernamesList).forEach(function(key) {
-      if(usernamesList[key].isPlaying == false && key != userK){
+      if(usernamesList[key].isPlaying == false && key != userK && denied.indexOf(key) == -1){
             user = key;
             return false;
         }
@@ -99,6 +99,7 @@ function LoginUser(username, socket){
                  obj.online = true;
                  obj.isPlaying = false;
                  obj.id = socket.id;
+                 obj.denied = [];
                  usernamesList[username] = obj; 
                  socket.emit("loggedIn");
             }
@@ -206,6 +207,7 @@ function CreateUsername(username, socket){
                      obj.online = true;
                      obj.isPlaying = false;
                      obj.id = socket.id;
+                     obj.denied = [];
                      usernamesList[username] = obj; 
                      
                 }
@@ -291,7 +293,9 @@ try {
 
         //Find online users
         socket.on('findOnlineUsers', function (data) {
-              var foundUser = findOnline(socket.username);
+              var curUs = socket.username;
+              var denied = usernamesList[curUs]["denied"];
+              var foundUser = findOnline(curUs, denied);
               socket.emit('foundUsers', foundUser);
         });
 
@@ -456,10 +460,13 @@ try {
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
             var us = data.user;
+            var curUs = socket.username;
             if(usernamesList[us] == undefined){
                     socket.emit("userCurrentlyPlaying", us + " cannot be found online");
                     return;
                 }
+            usernamesList[us]["denied"].push(curUs);
+            usernamesList[curUs]["denied"].push(us);
             var socketId = usernamesList[us]["id"];
             io.to(socketId).emit("sendRejection", data);
         })
