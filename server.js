@@ -89,7 +89,7 @@ function AddUserCount(){
 function LoginUser(username, socket){
  pool.connect()
   .then(client => {
-    client.query('UPDATE "Users" SET "Logins" = "Logins" + 1 WHERE "Username" = $1', [username]) // your query string here
+    return client.query('UPDATE "Users" SET "Logins" = "Logins" + 1 WHERE "Username" = $1', [username]) // your query string here
       .then(res => {
         client.release();
         console.log(username);
@@ -115,7 +115,7 @@ function LoginUser(username, socket){
 function SentWordCount(username){
      pool.connect()
   .then(client => {
-    client.query('UPDATE "Users" SET "SentWords" = "SentWords" + 1 WHERE "Username" = $1', [username]) // your query string here
+    return client.query('UPDATE "Users" SET "SentWords" = "SentWords" + 1 WHERE "Username" = $1', [username]) // your query string here
       .then(res => {
             
         client.release()
@@ -140,7 +140,7 @@ function CheckUsername(username, type, socket){
     
      pool.connect()
   .then(client => {
-     client.query('Select * FROM "Users" Where "Username" = $1', [checkName]) // your query string here
+     return client.query('Select * FROM "Users" Where "Username" = $1', [checkName]) // your query string here
       .then(res => {
             var rows = res.rows;
             console.log(rows);
@@ -170,7 +170,7 @@ function UpdateUserName(username, socket){
     var newName = username.newName;
  pool.connect()
   .then(client => {
-    client.query('UPDATE "Users" SET "Username" = $1 WHERE "Username" = $2', [newName, oldName]) // your query string here
+    return client.query('UPDATE "Users" SET "Username" = $1 WHERE "Username" = $2', [newName, oldName]) // your query string here
       .then(res => {
         client.release();
         //console.log("logging in");
@@ -194,12 +194,12 @@ function CreateUsername(username, socket){
   .then(client => {
     var que = 'INSERT INTO "Users" ("Connections", "Logins", "SentWords", "Username") VALUES($1, $2, $3, $4) RETURNING *';
     var val = [0, 1, 0, username];
-     client.query(que, val) // your query string here
+     return client.query(que, val) // your query string here
       .then(res => {
             var rows = res.rows;
             //client.release();
             //console.log(rows);
-            
+            client.release();
             if(rows.length > 0){
                 if(usernamesList[username] == undefined){
                      socket.username = username;
@@ -216,7 +216,7 @@ function CreateUsername(username, socket){
                 info.name = username;
                 socket.emit("createUserResult", info, true);
             }
-            client.release();
+            
         //console.log(res.rows[0]) // your callback here
       })
       .catch(e => {
