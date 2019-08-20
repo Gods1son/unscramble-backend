@@ -101,10 +101,9 @@ function LoginUser(username, socket){
                  obj.isPlaying = false;
                  obj.id = socket.id;
                  obj.denied = [];
-                 usernamesList[username] = obj; 
-                 socket.emit("loggedIn");
+                 usernamesList[username] = obj;   
             }
-        
+        	socket.emit("loggedIn");
       })
       .catch(e => {
         client.release()
