@@ -6,6 +6,7 @@ var port = process.env.PORT || 3000;
 //var server = require('http').createServer();
 var pg = require('pg');
 var thesaurus = require("thesaurus");
+var http = require('http');
 //var checkWord = require('check-word'),
 // words = checkWord('en');
 
@@ -282,12 +283,57 @@ try {
         
         //log in
         socket.on("Login", function(data){
-            LoginUser(data, socket);
+            //LoginUser(data, socket);
+            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + data;
+            http.get(url, function(response) {
+                // Continuously update stream with data
+                var body = '';
+                response.on('data', function(d) {
+                    body += d;
+                });
+                response.on('end', function() {
+                    //console.log(body);
+                    if(body == "success"){
+                        if(usernamesList[data] == undefined){
+                             socket.username = data;
+                             var obj = {};
+                             obj.online = true;
+                             obj.isPlaying = false;
+                             obj.id = socket.id;
+                             obj.denied = [];
+                             usernamesList[data] = obj; 
+                             socket.emit("loggedIn");
+                        }
+                    }
+                });
+            });
         })
         
         //update username
-        socket.on("updateUsername", function(data){
-            CheckUsername(data, "updateold", socket);
+        socket.on("updateUsername", function(username){
+            //CheckUsername(data, "updateold", socket);
+             var oldName = username.oldName;
+             var newName = username.newName;
+            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateUsername&username=" + oldName + "&newusername=" + newName;
+            http.get(url, function(response) {
+                // Continuously update stream with data
+                var body = '';
+                response.on('data', function(d) {
+                    body += d;
+                });
+                response.on('end', function() {
+                    //console.log(body);
+                    if(body == "success"){
+                        if(usernamesList[oldName] != undefined){
+                                usernamesList[newName] = usernamesList[oldName];    
+                                delete usernamesList[oldName];
+                                     socket.emit("usernameUpdatePass", username);
+                            }
+                        }else{
+                            socket.emit("createUserResult", "Username is taken, try another", false);
+                        }
+                });
+            });
         })
 
 
@@ -373,7 +419,20 @@ try {
                     info.groupName = roomName;
                     usernamesList[data]["isPlaying"] = true;
                     usernamesList[socket.username]["isPlaying"] = true;
-                    ConnectionCount(data, socket.username);
+                    //ConnectionCount(data, socket.username);
+                    var user2 = socket.username;
+                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            
+                        });
+                    });
                       io.sockets.in(socket.room).emit('joinedGroup', info);
                 } 
             }else{
@@ -397,15 +456,57 @@ try {
             if(usernamesList[data] != undefined){
                 usernamesList[data]["isPlaying"] = true;
                 usernamesList[socket.username]["isPlaying"] = true;
-                ConnectionCount(data, socket.username);
+                //ConnectionCount(data, socket.username);
+                var user2 = socket.username;
+                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            
+                        });
+                    });
                   io.sockets.in(socket.room).emit('joinedGroup', info);
             }
         });
         
         //create new user
         socket.on("createUsername", function(data){
-            CheckUsername(data, "createnew", socket);
+            //CheckUsername(data, "createnew", socket);
             //console.log(user);
+            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=createUsername&username=" + data;
+            http.get(url, function(response) {
+                // Continuously update stream with data
+                var body = '';
+                response.on('data', function(d) {
+                    body += d;
+                });
+                response.on('end', function() {
+                    //console.log(body);
+                    if(body == "success"){
+                        if(usernamesList[data] == undefined){
+                             socket.username = data;
+                             var obj = {};
+                             obj.online = true;
+                             obj.isPlaying = false;
+                             obj.id = socket.id;
+                             obj.denied = [];
+                             usernamesList[data] = obj; 
+
+                        }
+                        var info = {};
+                        info.msg = "Username Created";
+                        info.name = data;
+                        socket.emit("createUserResult", info, true);
+                    }else{
+                        socket.emit("createUserResult", "Username already chosen, choose another", false);
+                    }
+                });
+            });
         })
 
         // check if word exists
@@ -426,12 +527,45 @@ try {
                     socket.emit("userCurrentlyPlaying", "User cannot be found online");
                     return;
                 }
-            SentWordCount(socket.username);
+            //SentWordCount(socket.username);
+            var user = socket.username;
+            var word = data.correct;
+                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=saveWord&username=" + user + "&word=" + word;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            
+                        });
+                    });
             var socketId = usernamesList[rec]["id"];
             io.sockets.in(socket.room).emit('receiveWord', data);
             //io.to(socketId).emit("receiveWord", data);
         })
-
+        
+        //get all words
+        socket.on("allSentWords", function(data){
+            
+            //SentWordCount(socket.username);
+            var user = socket.username;
+            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersWords&username=" + user;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            socket.emit("allYourSentWords", body);
+                        });
+                    });
+                })
+        
         //send report card
         socket.on("markAnswer", function (data){
             io.sockets.in(socket.room).emit('reportCard', data);
