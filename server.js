@@ -309,20 +309,6 @@ try {
             });
         })
 	    
-	socket.on("needRef", function(){
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=getRef";
-            http.get(url, function(response) {
-                // Continuously update stream with data
-                var body = '';
-                response.on('data', function(d) {
-                    body += d;
-                });
-                response.on('end', function() {
-                    //console.log(body);
-                    socket.emit("getRef", body);
-                });
-            });
-        })
         
         //update username
         socket.on("updateUsername", function(username){
