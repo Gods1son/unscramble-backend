@@ -177,6 +177,7 @@ function UpdateUserName(username, socket){
         if(usernamesList[username.oldName] != undefined){
             usernamesList[username.newName] = usernamesList[username.oldName];    
             delete usernamesList[username.oldName];
+		socket.username = newName;
                  socket.emit("usernameUpdatePass", username);
             }
         
@@ -341,7 +342,8 @@ try {
                         if(usernamesList[oldName] != undefined){
                                 usernamesList[newName] = usernamesList[oldName];    
                                 delete usernamesList[oldName];
-                                     socket.emit("usernameUpdatePass", username);
+				socket.username = newName;
+                                socket.emit("usernameUpdatePass", username);
                             }
                         }else{
                             socket.emit("createUserResult", "Username is taken, try another", false);
@@ -354,9 +356,13 @@ try {
         //Find online users
         socket.on('findOnlineUsers', function (data) {
               var curUs = socket.username;
+            if(usernamesList[curUs] != undefined){
               var denied = usernamesList[curUs]["denied"];
               var foundUser = findOnline(curUs, denied);
               socket.emit('foundUsers', foundUser);
+            }else{
+                socket.emit("createUserResult", "Error, please reconnect", false);
+            }
         });
 
         //send invitation
