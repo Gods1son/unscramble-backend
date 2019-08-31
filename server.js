@@ -1,4 +1,5 @@
-var express = require('express');
+let express = require('express'),
+path = require('path');
 var cors = require("cors");
 var app = express();
 app.use(cors()); 
