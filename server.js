@@ -644,7 +644,7 @@ try {
                         var username = getKeyByValue(usernamesList, socket_id);
                         usernamesList[username]["isPlaying"] = false;
                         io.sockets.sockets[socket_id].leave(socket.room);
-                    });f
+                    });
                 }
             });
         })
