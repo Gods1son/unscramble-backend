@@ -55,6 +55,7 @@ app.use(express.static('public'));
   });
 
 var usernamesList = {};
+var userScores = {};
 
 function findOnline(userK, denied){
     var user;
@@ -573,9 +574,34 @@ try {
                     });
                 })
         
+        //get all game scores
+        socket.on("allGameScores", function(data){
+            
+            //SentWordCount(socket.username);
+            var user = socket.username;
+            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersGames&username=" + user;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            socket.emit("allYourGameScores", body);
+                        });
+                    });
+                })
+        
         //send report card
         socket.on("markAnswer", function (data){
             io.sockets.in(socket.room).emit('reportCard', data);
+        })
+        
+        //updates scores
+        socket.on("updateScores", function (data){
+            var roomName = socket.room;
+            userScores[roomName] = data;
         })
 
         // when the user disconnects.. perform this
@@ -584,9 +610,34 @@ try {
             
             io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
-                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
                    // console.log('clients in the room: \n');
                    // console.log(clients);
+                    var roomName = socket.room;
+                    var data = userScores[roomName];
+                    if(data != undefined){
+                        //update server scores
+                        var player1 = data.player1;
+                        if(player1 != undefined){
+                        var player1score = data.player1score;
+                        var player2 = data.player2;
+                        var player2score = data.player2score;
+                        var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateScores&player1=" + player1 + "&player1score=" + player1score + "&player2=" + player2 + "&player2score=" + player2score;
+                                http.get(url, function(response) {
+                                    // Continuously update stream with data
+                                    var body = '';
+                                    response.on('data', function(d) {
+                                        body += d;
+                                    });
+                                    response.on('end', function() {
+                                         //console.log(body);    
+                                    });
+                                });
+                        //update server scores
+                        }
+                    }
+                        
+                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
+                    delete userScores[socket.room];
                     clients.forEach(function (socket_id) {
                         var username = getKeyByValue(usernamesList, socket_id);
                         usernamesList[username]["isPlaying"] = false;
@@ -637,9 +688,35 @@ try {
             
             io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
-                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room will be closed');
-                    //console.log('clients in the room: \n');
-                    //console.log(clients);
+                   // console.log('clients in the room: \n');
+                   // console.log(clients);
+                    //update server scores
+                     var roomName = socket.room;
+                    var data = userScores[roomName];
+                    if(data != undefined){
+                        //update server scores
+                        var player1 = data.player1;
+                        if(player1 != undefined){
+                        var player1score = data.player1score;
+                        var player2 = data.player2;
+                        var player2score = data.player2score;
+                        var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateScores&player1=" + player1 + "&player1score=" + player1score + "&player2=" + player2 + "&player2score=" + player2score;
+                                http.get(url, function(response) {
+                                    // Continuously update stream with data
+                                    var body = '';
+                                    response.on('data', function(d) {
+                                        body += d;
+                                    });
+                                    response.on('end', function() {
+                                         //console.log(body);    
+                                    });
+                                });
+                        //update server scores
+                        }
+                    }
+                    
+                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
+                    delete userScores[socket.room];
                     clients.forEach(function (socket_id) {
                         var username = getKeyByValue(usernamesList, socket_id);
                         usernamesList[username]["isPlaying"] = false;
@@ -653,3 +730,4 @@ try {
 }catch(err){
     socket.emit("serverError", "System Error");
 }
+
