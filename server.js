@@ -401,9 +401,11 @@ try {
             //join users
             var info = {};
             if(dataOr.indexOf("Created") == -1){
-                var socketId = usernamesList[socket.username]["id"];
-                    io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
-                    return;
+		    if(usernamesList[socket.username] != undefined){
+		    	var socketId = usernamesList[socket.username]["id"];
+                    	io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
+                    	return;
+		    }
             }
             
             var data = dataOr.replace("Created","");
@@ -444,8 +446,10 @@ try {
                       io.sockets.in(socket.room).emit('joinedGroup', info);
                 } 
             }else{
-                var socketId = usernamesList[socket.username]["id"];
-                io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
+		    if(usernamesList[socket.username] != undefined){
+		    	var socketId = usernamesList[socket.username]["id"];
+			io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
+		    }
             }
         });
 
