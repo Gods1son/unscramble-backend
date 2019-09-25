@@ -260,358 +260,413 @@ var server = app.listen(port, function(){
 //var io = new SocketServer({ server });
 var io = require('socket.io').listen(server);
 
-try {
     io.sockets.on('connection', function (socket) {
         //console.log("connect");
         
         var currentUser;
         //register user
         socket.on('pickUsername', function (username) {
-            var success = true;
-            if(usernamesList[username] == undefined){
-                 socket.username = username;
-                 var obj = {};
-                 obj.online = true;
-                         obj.isPlaying = false;
-                 obj.id = socket.id;
-                 usernamesList[username] = obj; 
-                 //AddUserCount();
-                 socket.emit('welcomeHere', success, obj);
-            }else{
-                 success = false;
-                 socket.emit('welcomeHere', success);
-            }		
+            try{
+                var success = true;
+                if(usernamesList[username] == undefined){
+                     socket.username = username;
+                     var obj = {};
+                     obj.online = true;
+                             obj.isPlaying = false;
+                     obj.id = socket.id;
+                     usernamesList[username] = obj; 
+                     //AddUserCount();
+                     socket.emit('welcomeHere', success, obj);
+                }else{
+                     success = false;
+                     socket.emit('welcomeHere', success);
+                }
+            }catch(err){
+                
+            }
         });
         
         //log in
         socket.on("Login", function(data){
             //LoginUser(data, socket);
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + data;
-            http.get(url, function(response) {
-                // Continuously update stream with data
-                var body = '';
-                response.on('data', function(d) {
-                    body += d;
-                });
-                response.on('end', function() {
-                    //console.log(body);
-                    if(body == "success"){
-                        if(usernamesList[data] == undefined){
-                             socket.username = data;
-                             var obj = {};
-                             obj.online = true;
-                             obj.isPlaying = false;
-                             obj.id = socket.id;
-                             obj.denied = [];
-                             usernamesList[data] = obj; 
-                             socket.emit("loggedIn");
+            try{
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + data;
+                http.get(url, function(response) {
+                    // Continuously update stream with data
+                    var body = '';
+                    response.on('data', function(d) {
+                        body += d;
+                    });
+                    response.on('end', function() {
+                        //console.log(body);
+                        if(body == "success"){
+                            if(usernamesList[data] == undefined){
+                                 socket.username = data;
+                                 var obj = {};
+                                 obj.online = true;
+                                 obj.isPlaying = false;
+                                 obj.id = socket.id;
+                                 obj.denied = [];
+                                 usernamesList[data] = obj; 
+                                 socket.emit("loggedIn");
+                            }
                         }
-                    }
+                    });
                 });
-            });
+            }catch(err){
+                
+            }
         })
 	    
         
         //update username
         socket.on("updateUsername", function(username){
-            //CheckUsername(data, "updateold", socket);
-             var oldName = username.oldName;
-             var newName = username.newName;
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateUsername&username=" + oldName + "&newusername=" + newName;
-            http.get(url, function(response) {
-                // Continuously update stream with data
-                var body = '';
-                response.on('data', function(d) {
-                    body += d;
-                });
-                response.on('end', function() {
-                    //console.log(body);
-                    if(body == "success"){
-                        if(usernamesList[oldName] != undefined){
-                                usernamesList[newName] = usernamesList[oldName];    
-                                delete usernamesList[oldName];
-				socket.username = newName;
-                                socket.emit("usernameUpdatePass", username);
+            try{
+                //CheckUsername(data, "updateold", socket);
+                 var oldName = username.oldName;
+                 var newName = username.newName;
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateUsername&username=" + oldName + "&newusername=" + newName;
+                http.get(url, function(response) {
+                    // Continuously update stream with data
+                    var body = '';
+                    response.on('data', function(d) {
+                        body += d;
+                    });
+                    response.on('end', function() {
+                        //console.log(body);
+                        if(body == "success"){
+                            if(usernamesList[oldName] != undefined){
+                                    usernamesList[newName] = usernamesList[oldName];    
+                                    delete usernamesList[oldName];
+                    socket.username = newName;
+                                    socket.emit("usernameUpdatePass", username);
+                                }
+                            }else{
+                                socket.emit("createUserResult", "Username is taken, try another", false);
                             }
-                        }else{
-                            socket.emit("createUserResult", "Username is taken, try another", false);
-                        }
+                    });
                 });
-            });
+            }catch(err){
+                
+            }
         })
 
 
         //Find online users
         socket.on('findOnlineUsers', function (data) {
-              var curUs = socket.username;
-            if(usernamesList[curUs] != undefined){
-              var denied = usernamesList[curUs]["denied"];
-              var foundUser = findOnline(curUs, denied);
-              socket.emit('foundUsers', foundUser);
-            }else{
-                socket.emit("createUserResult", "Error, please reconnect", false);
+            try{
+                  var curUs = socket.username;
+                if(usernamesList[curUs] != undefined){
+                  var denied = usernamesList[curUs]["denied"];
+                  var foundUser = findOnline(curUs, denied);
+                  socket.emit('foundUsers', foundUser);
+                }else{
+                    socket.emit("createUserResult", "Error, please reconnect", false);
+                }
+            }catch(err){
+                
             }
         });
 
         //send invitation
         socket.on('inviteUser', function (data) {
-            // we tell the client to execute 'updatechat' with 2 parameters
-            if(usernamesList[data] == undefined){
-                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
-                    return;
-                }
-            
-            if(usernamesList[data]["isPlaying"] == false){
-                    
-                if(usernamesList[socket.username] == undefined){
-                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
-                    return;
-                }
-                var socketId = usernamesList[data]["id"];
-                    var roomName = socket.username + data;
-                     socket.room = roomName;
-                    socket.join(roomName);
-                var currsocketId = usernamesList[socket.username]["id"];
-               io.to(socketId).emit("sendInvitation", socket.username);
-                io.to(currsocketId).emit("invitationSent", socket.username);
-            }else{
-                socket.emit('invitationError', false);
-            }	
+            try{
+                // we tell the client to execute 'updatechat' with 2 parameters
+                if(usernamesList[data] == undefined){
+                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                        return;
+                    }
+
+                if(usernamesList[data]["isPlaying"] == false){
+
+                    if(usernamesList[socket.username] == undefined){
+                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                        return;
+                    }
+                    var socketId = usernamesList[data]["id"];
+                        var roomName = socket.username + data;
+                         socket.room = roomName;
+                        socket.join(roomName);
+                    var currsocketId = usernamesList[socket.username]["id"];
+                   io.to(socketId).emit("sendInvitation", socket.username);
+                    io.to(currsocketId).emit("invitationSent", socket.username);
+                }else{
+                    socket.emit('invitationError', false);
+                }	
+            }catch(err){
+                
+            }
         });
         
         //invite friend
         socket.on('inviteFriend', function (data) {
             // we tell the client to execute 'updatechat' with 2 parameters
                     //var socketId = usernamesList[data]["id"];
-            if(usernamesList[socket.username] == undefined){
-                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
-                    return;
-                }
-                    var roomName = socket.username + "Created";
-                     socket.room = roomName;
-                    socket.join(roomName);
-                    var currsocketId = usernamesList[socket.username]["id"];
-                    usernamesList[socket.username]["roomName"] = roomName;
-                    io.to(currsocketId).emit("roomCreated", socket.username);	
+            try{
+                if(usernamesList[socket.username] == undefined){
+                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                        return;
+                    }
+                        var roomName = socket.username + "Created";
+                         socket.room = roomName;
+                        socket.join(roomName);
+                        var currsocketId = usernamesList[socket.username]["id"];
+                        usernamesList[socket.username]["roomName"] = roomName;
+                        io.to(currsocketId).emit("roomCreated", socket.username);	
+            }catch(err){
+                
+            }
         });
         
         //Accept friend invitation
         socket.on('acceptFriendInvitation', function (dataOr) {
-              
-            //join users
-            var info = {};
-            if(dataOr.indexOf("Created") == -1){
-		    if(usernamesList[socket.username] != undefined){
-		    	var socketId = usernamesList[socket.username]["id"];
-                    	io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
-                    	return;
-		    }
-            }
-            
-            var data = dataOr.replace("Created","");
-            if(usernamesList[data] != undefined){
-                if(usernamesList[data]["roomName"] == undefined){
+             try{ 
+                //join users
+                var info = {};
+                if(dataOr.indexOf("Created") == -1){
+                if(usernamesList[socket.username] != undefined){
                     var socketId = usernamesList[socket.username]["id"];
-                    io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
-                    return;
+                            io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
+                            return;
+                      }
                 }
-            if(usernamesList[data]["isPlaying"] == true){
-                    var socketId = usernamesList[socket.username]["id"];
-                    io.to(socketId).emit("userCurrentlyPlaying", "User is playing a game now, try later");
+
+                var data = dataOr.replace("Created","");
+                if(usernamesList[data] != undefined){
+                    if(usernamesList[data]["roomName"] == undefined){
+                        var socketId = usernamesList[socket.username]["id"];
+                        io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
+                        return;
+                    }
+                if(usernamesList[data]["isPlaying"] == true){
+                        var socketId = usernamesList[socket.username]["id"];
+                        io.to(socketId).emit("userCurrentlyPlaying", "User is playing a game now, try later");
+                    }else{
+                        var roomName = dataOr;
+                        socket.room = roomName;
+                        socket.join(roomName);
+                        info.player1 = data;
+                        info.player1Score = 0;
+                        info.player2 = socket.username;
+                        info.player2Score = 0;
+                        info.groupName = roomName;
+                        usernamesList[data]["isPlaying"] = true;
+                        usernamesList[socket.username]["isPlaying"] = true;
+                        //ConnectionCount(data, socket.username);
+                        var user2 = socket.username;
+                        var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
+                        http.get(url, function(response) {
+                            // Continuously update stream with data
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                //console.log(body);
+
+                            });
+                        });
+                          io.sockets.in(socket.room).emit('joinedGroup', info);
+                    } 
                 }else{
-                    var roomName = dataOr;
-                    socket.room = roomName;
-                    socket.join(roomName);
+                if(usernamesList[socket.username] != undefined){
+                         var socketId = usernamesList[socket.username]["id"];
+                         io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
+                      }
+                    }
+                }catch(err){
+                    
+                }
+            });
+
+             //Accept invitation
+            socket.on('acceptInvitation', function (data) {
+                try{
+                      var roomName = data + socket.username;
+                      socket.room = roomName;
+                      socket.join(roomName);
+                    //join users
+                    var info = {};
+                    info.groupName = roomName;
                     info.player1 = data;
                     info.player1Score = 0;
                     info.player2 = socket.username;
                     info.player2Score = 0;
-                    info.groupName = roomName;
-                    usernamesList[data]["isPlaying"] = true;
-                    usernamesList[socket.username]["isPlaying"] = true;
-                    //ConnectionCount(data, socket.username);
-                    var user2 = socket.username;
-                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
-                    http.get(url, function(response) {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
-                        });
-                        response.on('end', function() {
-                            //console.log(body);
-                            
-                        });
-                    });
-                      io.sockets.in(socket.room).emit('joinedGroup', info);
-                } 
-            }else{
-		    if(usernamesList[socket.username] != undefined){
-		    	var socketId = usernamesList[socket.username]["id"];
-			io.to(socketId).emit("userCurrentlyPlaying", "User is not online now");
-		    }
-            }
-        });
+                    if(usernamesList[data] != undefined){
+                        usernamesList[data]["isPlaying"] = true;
+                        usernamesList[socket.username]["isPlaying"] = true;
+                        //ConnectionCount(data, socket.username);
+                        var user2 = socket.username;
+                            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
+                            http.get(url, function(response) {
+                                // Continuously update stream with data
+                                var body = '';
+                                response.on('data', function(d) {
+                                    body += d;
+                                });
+                                response.on('end', function() {
+                                    //console.log(body);
 
-         //Accept invitation
-        socket.on('acceptInvitation', function (data) {
-              var roomName = data + socket.username;
-              socket.room = roomName;
-              socket.join(roomName);
-            //join users
-            var info = {};
-            info.groupName = roomName;
-            info.player1 = data;
-            info.player1Score = 0;
-            info.player2 = socket.username;
-            info.player2Score = 0;
-            if(usernamesList[data] != undefined){
-                usernamesList[data]["isPlaying"] = true;
-                usernamesList[socket.username]["isPlaying"] = true;
-                //ConnectionCount(data, socket.username);
-                var user2 = socket.username;
-                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=increaseConnections&username=" + data + "&username2=" + user2;
-                    http.get(url, function(response) {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
-                        });
-                        response.on('end', function() {
-                            //console.log(body);
-                            
-                        });
-                    });
-                  io.sockets.in(socket.room).emit('joinedGroup', info);
-            }
-        });
-        
-        //create new user
-        socket.on("createUsername", function(data){
-            //CheckUsername(data, "createnew", socket);
-            //console.log(user);
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=createUsername&username=" + data;
-            http.get(url, function(response) {
-                // Continuously update stream with data
-                var body = '';
-                response.on('data', function(d) {
-                    body += d;
-                });
-                response.on('end', function() {
-                    //console.log(body);
-                    if(body == "success"){
-                        if(usernamesList[data] == undefined){
-                             socket.username = data;
-                             var obj = {};
-                             obj.online = true;
-                             obj.isPlaying = false;
-                             obj.id = socket.id;
-                             obj.denied = [];
-                             usernamesList[data] = obj; 
-
+                                });
+                            });
+                          io.sockets.in(socket.room).emit('joinedGroup', info);
                         }
-                        var info = {};
-                        info.msg = "Username Created";
-                        info.name = data;
-                        socket.emit("createUserResult", info, true);
-                    }else{
-                        socket.emit("createUserResult", "Username already chosen, choose another", false);
-                    }
-                });
+                }catch(err){
+                    
+                }
             });
+
+            //create new user
+            socket.on("createUsername", function(data){
+                try{
+                    //CheckUsername(data, "createnew", socket);
+                    //console.log(user);
+                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=createUsername&username=" + data;
+                    http.get(url, function(response) {
+                        // Continuously update stream with data
+                        var body = '';
+                        response.on('data', function(d) {
+                            body += d;
+                        });
+                        response.on('end', function() {
+                            //console.log(body);
+                            if(body == "success"){
+                                if(usernamesList[data] == undefined){
+                                     socket.username = data;
+                                     var obj = {};
+                                     obj.online = true;
+                                     obj.isPlaying = false;
+                                     obj.id = socket.id;
+                                     obj.denied = [];
+                                     usernamesList[data] = obj; 
+
+                                }
+                                var info = {};
+                                info.msg = "Username Created";
+                                info.name = data;
+                                socket.emit("createUserResult", info, true);
+                            }else{
+                                socket.emit("createUserResult", "Username already chosen, choose another", false);
+                            }
+                        });
+                    });
+                }catch(err){
+                    
+                }
         })
 
         // check if word exists
         socket.on('checkWord', function(data){
+            try{    
                 var prd = thesaurus.find(data);
                 var res = prd.length > 0 ? true : false;
                 if(res){
                     prd = prd.slice(0,4);
                 }
                 socket.emit('RescheckWord', res, prd);
-
+            }catch(err){
+                
+            }
         });
 
         //receive and send word
         socket.on("sendWord", function(data){
-            var rec = data.receiver;
-            if(usernamesList[rec] == undefined){
-                    socket.emit("userCurrentlyPlaying", "User cannot be found online");
-                    return;
-                }
-            //SentWordCount(socket.username);
-            var user = socket.username;
-            var word = data.correct;
-                    var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=saveWord&username=" + user + "&word=" + word;
-                    http.get(url, function(response) {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
+            try{   
+                var rec = data.receiver;
+                if(usernamesList[rec] == undefined){
+                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                        return;
+                    }
+                //SentWordCount(socket.username);
+                var user = socket.username;
+                var word = data.correct;
+                        var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=saveWord&username=" + user + "&word=" + word;
+                        http.get(url, function(response) {
+                            // Continuously update stream with data
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                //console.log(body);
+
+                            });
                         });
-                        response.on('end', function() {
-                            //console.log(body);
-                            
-                        });
-                    });
-            var socketId = usernamesList[rec]["id"];
-            io.sockets.in(socket.room).emit('receiveWord', data);
-            //io.to(socketId).emit("receiveWord", data);
+                var socketId = usernamesList[rec]["id"];
+                io.sockets.in(socket.room).emit('receiveWord', data);
+                //io.to(socketId).emit("receiveWord", data);
+            }catch(err){
+                
+            }
         })
         
         //get all words
         socket.on("allSentWords", function(data){
-            
-            //SentWordCount(socket.username);
-            var user = socket.username;
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersWords&username=" + user;
-                    http.get(url, function(response) {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
+            try{
+                //SentWordCount(socket.username);
+                var user = socket.username;
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersWords&username=" + user;
+                        http.get(url, function(response) {
+                            // Continuously update stream with data
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                //console.log(body);
+                                socket.emit("allYourSentWords", body);
+                            });
                         });
-                        response.on('end', function() {
-                            //console.log(body);
-                            socket.emit("allYourSentWords", body);
-                        });
-                    });
-                })
+                }catch(err){
+                    
+                }
+            })
         
         //get all game scores
         socket.on("allGameScores", function(data){
-            
-            //SentWordCount(socket.username);
-            var user = socket.username;
-            var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersGames&username=" + user;
-                    http.get(url, function(response) {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
+            try{
+                //SentWordCount(socket.username);
+                var user = socket.username;
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=usersGames&username=" + user;
+                        http.get(url, function(response) {
+                            // Continuously update stream with data
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                //console.log(body);
+                                socket.emit("allYourGameScores", body);
+                            });
                         });
-                        response.on('end', function() {
-                            //console.log(body);
-                            socket.emit("allYourGameScores", body);
-                        });
-                    });
-                })
+                }catch(err){
+                    
+                }
+            })
         
         //send report card
         socket.on("markAnswer", function (data){
-            io.sockets.in(socket.room).emit('reportCard', data);
+            try{
+                io.sockets.in(socket.room).emit('reportCard', data);
+            }catch(err){
+                
+            }
         })
         
         //updates scores
         socket.on("updateScores", function (data){
-            var roomName = socket.room;
-            userScores[roomName] = data;
+            try{
+                var roomName = socket.room;
+                userScores[roomName] = data;
+            }catch(err){
+                
+            }
         })
 
         // when the user disconnects.. perform this
         socket.on('disconnect', function(){
                 //delete user from userlist
-            
+           try{ 
             io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
                    // console.log('clients in the room: \n');
@@ -650,33 +705,43 @@ try {
                 }
             });
                 delete usernamesList[socket.username];
-
+           }catch(err){
+               
+           }
         });
         
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
-            var us = data.user;
-            var curUs = socket.username;
-            if(usernamesList[us] == undefined){
-                    socket.emit("userCurrentlyPlaying", us + " cannot be found online");
-                    return;
-                }
-            usernamesList[us]["denied"].push(curUs);
-            usernamesList[curUs]["denied"].push(us);
-            var socketId = usernamesList[us]["id"];
-            io.to(socketId).emit("sendRejection", data);
+            try{
+                var us = data.user;
+                var curUs = socket.username;
+                if(usernamesList[us] == undefined){
+                        socket.emit("userCurrentlyPlaying", us + " cannot be found online");
+                        return;
+                    }
+                usernamesList[us]["denied"].push(curUs);
+                usernamesList[curUs]["denied"].push(us);
+                var socketId = usernamesList[us]["id"];
+                io.to(socketId).emit("sendRejection", data);
+            }catch(err){
+                
+            }
         })
         
         //update timer for opponent
         socket.on("opponentTimer", function(data){
-            var us = data.receiver;
-            if(usernamesList[us] == undefined){
-                    socket.emit("userCurrentlyPlaying",  us + " cannot be found online");
-                    return;
+            try{
+                var us = data.receiver;
+                if(usernamesList[us] == undefined){
+                        socket.emit("userCurrentlyPlaying",  us + " cannot be found online");
+                        return;
+                    }
+                if(usernamesList[us] != undefined){
+                    var socketId = usernamesList[us]["id"];
+                    io.to(socketId).emit("opponentTimerRead", data);
                 }
-            if(usernamesList[us] != undefined){
-                var socketId = usernamesList[us]["id"];
-                io.to(socketId).emit("opponentTimerRead", data);
+            }catch(err){
+                
             }
         })
         
@@ -689,7 +754,7 @@ try {
                     users[i].leave(socket.room);
                 };
             }*/
-            
+           try{ 
             io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
                    // console.log('clients in the room: \n');
@@ -728,10 +793,9 @@ try {
                     });
                 }
             });
+           }catch(err){
+               
+           }
         })
 
     })
-}catch(err){
-    socket.emit("serverError", "System Error");
-}
-
