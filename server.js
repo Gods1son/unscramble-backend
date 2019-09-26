@@ -767,6 +767,7 @@ var io = require('socket.io').listen(server);
         
         //join room after reconnect
         socket.on("reconnectJoinRoom", function(data){
+            try{
             var username = data.username;
             var grp = data.groupName;
             var id = data.id;
@@ -774,11 +775,13 @@ var io = require('socket.io').listen(server);
                 usernamesList[username]["id"] = id;
                 socket.join(grp);
                 console.log("intact");
-                socket.emit("rejoinedGroup", usernameList[username]);
+                socket.emit("rejoinedGroup", usernamesList[username]);
             }else{
                 console.log("not found");
             }
-            
+            }catch(err){
+                
+            }
         })
         
         //delete room and members
