@@ -686,7 +686,7 @@ var io = require('socket.io').listen(server);
         socket.on('disconnect', function(){
                 //delete user from userlist
            try{ 
-            io.of('/').in(socket.room).clients(function(error, clients) {
+            /*io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
                    // console.log('clients in the room: \n');
                    // console.log(clients);
@@ -723,7 +723,7 @@ var io = require('socket.io').listen(server);
                     });
                 }
             });
-                delete usernamesList[socket.username];
+                delete usernamesList[socket.username];*/
            }catch(err){
                
            }
