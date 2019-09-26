@@ -515,6 +515,19 @@ var io = require('socket.io').listen(server);
                     
                 }
             });
+	    
+	            
+        socket.on("rejoinGame", function(grp, prt){
+            var scr = userScores[grp];
+            socket.join(grp);
+            var info = {};
+                    info.groupName = grp;
+                    info.player1 = scr.player1;
+                    info.player1Score = player1score;
+                    info.player2 = player2;
+                    info.player2Score = player2score;
+                    info.player2Score = player2score;
+        })
 
             //create new user
             socket.on("createUsername", function(data){
