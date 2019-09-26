@@ -289,9 +289,8 @@ var io = require('socket.io').listen(server);
         //log in
         socket.on("Login", function(data){
             //LoginUser(data, socket);
-            var user = data.username;
             try{
-                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + user;
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + data;
                 http.get(url, function(response) {
                     // Continuously update stream with data
                     var body = '';
@@ -302,11 +301,11 @@ var io = require('socket.io').listen(server);
                         //console.log(body);
                         if(body == "success"){
                             if(usernamesList[data] == undefined){
-                                 socket.username = user;
+                                 socket.username = data;
                                  var obj = {};
                                  obj.online = true;
                                  obj.isPlaying = false;
-                                 obj.id = data.id;
+                                 obj.id = socket.id;
                                  obj.denied = [];
                                  usernamesList[data] = obj; 
                                  socket.emit("loggedIn");
@@ -668,64 +667,48 @@ var io = require('socket.io').listen(server);
         socket.on('disconnect', function(){
                 //delete user from userlist
            try{ 
-            /*io.of('/').in(socket.room).clients(function(error, clients) {
+            io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
-                    socket.broadcast.to(socket.room).emit('generic', socket.username+' is reconnecting', false);   
-                }else{
-					delete usernamesList[socket.username];
-				}
-            });*/
-                //delete usernamesList[socket.username];
+                   // console.log('clients in the room: \n');
+                   // console.log(clients);
+                    var roomName = socket.room;
+                    var data = userScores[roomName];
+                    if(data != undefined){
+                        //update server scores
+                        var player1 = data.player1;
+                        if(player1 != undefined){
+                        var player1score = data.player1score;
+                        var player2 = data.player2;
+                        var player2score = data.player2score;
+                        var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateScores&player1=" + player1 + "&player1score=" + player1score + "&player2=" + player2 + "&player2score=" + player2score;
+                                http.get(url, function(response) {
+                                    // Continuously update stream with data
+                                    var body = '';
+                                    response.on('data', function(d) {
+                                        body += d;
+                                    });
+                                    response.on('end', function() {
+                                         //console.log(body);    
+                                    });
+                                });
+                        //update server scores
+                        }
+                    }
+                        
+                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
+                    delete userScores[socket.room];
+                    clients.forEach(function (socket_id) {
+                        var username = getKeyByValue(usernamesList, socket_id);
+                        usernamesList[username]["isPlaying"] = false;
+                        io.sockets.sockets[socket_id].leave(socket.room);
+                    });
+                }
+            });
+                delete usernamesList[socket.username];
            }catch(err){
                
            }
         });
-
-		//socket reconnecting
-             /* socket.on('reconnecting', function (attemptNumber) {
-                  console.log("reconnecting");
-              	if (attemptNumber == 10) {
-              		io.of('/').in(socket.room).clients(function(error, clients) {
-						if (clients.length > 0) {
-						   // console.log('clients in the room: \n');
-						   // console.log(clients);
-							var roomName = socket.room;
-							var data = userScores[roomName];
-							if(data != undefined){
-								//update server scores
-								var player1 = data.player1;
-								if(player1 != undefined){
-								var player1score = data.player1score;
-								var player2 = data.player2;
-								var player2score = data.player2score;
-								var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=updateScores&player1=" + player1 + "&player1score=" + player1score + "&player2=" + player2 + "&player2score=" + player2score;
-										http.get(url, function(response) {
-											// Continuously update stream with data
-											var body = '';
-											response.on('data', function(d) {
-												body += d;
-											});
-											response.on('end', function() {
-												 //console.log(body);    
-											});
-										});
-								//update server scores
-								}
-							}
-                        
-							socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
-							delete userScores[socket.room];
-							clients.forEach(function (socket_id) {
-								var username = getKeyByValue(usernamesList, socket_id);
-								usernamesList[username]["isPlaying"] = false;
-								io.sockets.sockets[socket_id].leave(socket.room);
-							});
-						}else{
-							delete usernamesList[socket.username];
-						}
-					});
-				 }
-              });*/
         
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
@@ -757,26 +740,6 @@ var io = require('socket.io').listen(server);
                     var socketId = usernamesList[us]["id"];
                     io.to(socketId).emit("opponentTimerRead", data);
                 }
-            }catch(err){
-                
-            }
-        })
-        
-        //join room after reconnect
-        socket.on("reconnectJoinRoom", function(data){
-            try{
-            var username = data.username;
-            var grp = data.groupName;
-            var id = data.id;
-            if(usernamesList[username] != undefined){
-                usernamesList[username]["id"] = id;
-                socket.username = username;
-                socket.join(grp);
-                console.log("intact");
-                socket.emit("rejoinedGroup", usernamesList[username]);
-            }else{
-                console.log("not found");
-            }
             }catch(err){
                 
             }
@@ -820,7 +783,7 @@ var io = require('socket.io').listen(server);
                         //update server scores
                         }
                     }
-                    //console.log("deleted");
+                    
                     socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
                     delete userScores[socket.room];
                     clients.forEach(function (socket_id) {
