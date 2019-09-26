@@ -289,8 +289,9 @@ var io = require('socket.io').listen(server);
         //log in
         socket.on("Login", function(data){
             //LoginUser(data, socket);
+            var user = data.username;
             try{
-                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + data;
+                var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=loginUser&username=" + user;
                 http.get(url, function(response) {
                     // Continuously update stream with data
                     var body = '';
@@ -301,18 +302,14 @@ var io = require('socket.io').listen(server);
                         //console.log(body);
                         if(body == "success"){
                             if(usernamesList[data] == undefined){
-                                 socket.username = data;
+                                 socket.username = user;
                                  var obj = {};
                                  obj.online = true;
                                  obj.isPlaying = false;
-                                 obj.id = socket.id;
+                                 obj.id = data.id;
                                  obj.denied = [];
                                  usernamesList[data] = obj; 
                                  socket.emit("loggedIn");
-                            }else{
-                                usernamesList[data]["id"] = socket.id;
-                                usernamesList[data]["isPlaying"] = false;
-                                socket.emit("loggedIn");
                             }
                         }
                     });
