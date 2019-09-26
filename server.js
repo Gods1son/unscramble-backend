@@ -685,7 +685,7 @@ var io = require('socket.io').listen(server);
         });
 
 		//socket reconnecting
-             /* socket.on('reconnect_attempt', function (attemptNumber) {
+              socket.on('reconnecting', function (attemptNumber) {
               	if (attemptNumber == 10) {
               		io.of('/').in(socket.room).clients(function(error, clients) {
 						if (clients.length > 0) {
@@ -727,7 +727,7 @@ var io = require('socket.io').listen(server);
 						}
 					});
 				 }
-              });*/
+              });
         
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
