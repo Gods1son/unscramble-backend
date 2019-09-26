@@ -773,6 +773,7 @@ var io = require('socket.io').listen(server);
             var id = data.id;
             if(usernamesList[username] != undefined){
                 usernamesList[username]["id"] = id;
+                socket.username = username;
                 socket.join(grp);
                 console.log("intact");
                 socket.emit("rejoinedGroup", usernamesList[username]);
