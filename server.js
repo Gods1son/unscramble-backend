@@ -517,8 +517,10 @@ var io = require('socket.io').listen(server);
             });
 	    
 	            
-        socket.on("rejoinGame", function(grp, prt){
+         socket.on("rejoinGame", function(grp, prt){
+            try{
             var scr = userScores[grp];
+                if(scr != undefined){
             socket.join(grp);
             var info = {};
                     info.groupName = grp;
@@ -527,6 +529,10 @@ var io = require('socket.io').listen(server);
                     info.player2 = player2;
                     info.player2Score = player2score;
                     info.player2Score = player2score;
+                }
+            }catch(err){
+                
+            }
         })
 
             //create new user
