@@ -286,7 +286,7 @@ var io = require('socket.io').listen(server);
             }
         });
         
-        //log in
+         //log in
         socket.on("Login", function(data){
             //LoginUser(data, socket);
             try{
@@ -309,7 +309,12 @@ var io = require('socket.io').listen(server);
                                  obj.denied = [];
                                  usernamesList[data] = obj; 
                                  socket.emit("loggedIn");
+                            }else{
+                                usernamesList[data]["id"] = socket.id;
+                                socket.emit("loggedIn");
                             }
+                        }else{
+                            socket.emit("generic", false, "Connection problem");
                         }
                     });
                 });
