@@ -262,7 +262,7 @@ var io = require('socket.io').listen(server);
 
     io.sockets.on('connection', function (socket) {
         //console.log("connect");
-        
+        //console.log(socket.id);
         var currentUser;
         //register user
         socket.on('pickUsername', function (username) {
@@ -515,9 +515,8 @@ var io = require('socket.io').listen(server);
                     
                 }
             });
-	    
-	            
-         socket.on("rejoinGame", function(grp, prt){
+        
+        socket.on("rejoinGame", function(grp, prt){
             try{
             var scr = userScores[grp];
                 if(scr != undefined){
@@ -681,9 +680,23 @@ var io = require('socket.io').listen(server);
                 
             }
         })
+        
+        socket.on("reconnectUser", function(data){
+            
+            try{
+               console.log("reconnect");
+                if(usernamesList[data] != undefined){
+                    usernamesList[data]["id"] = socket.id;
+                    socket.emit("rejoined", socket.id);
+                } 
+            }catch(err){
+                
+            }
+        })
 
         // when the user disconnects.. perform this
         socket.on('disconnect', function(){
+            console.log("discnonnected");
                 //delete user from userlist
            try{ 
             io.of('/').in(socket.room).clients(function(error, clients) {
@@ -723,7 +736,7 @@ var io = require('socket.io').listen(server);
                     });
                 }
             });
-                delete usernamesList[socket.username];
+                //delete usernamesList[socket.username];
            }catch(err){
                
            }
