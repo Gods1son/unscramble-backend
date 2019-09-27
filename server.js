@@ -719,12 +719,12 @@ var io = require('socket.io').listen(server);
             console.log("disconnected");
                 //delete user from userlist
            try{ 
-            /*io.of('/').in(socket.room).clients(function(error, clients) {
+            io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
                    // console.log('clients in the room: \n');
                    // console.log(clients);
                     var roomName = socket.room;
-                    var data = userScores[roomName];
+                    /*var data = userScores[roomName];
                     if(data != undefined){
                         //update server scores
                         var player1 = data.player1;
@@ -745,23 +745,23 @@ var io = require('socket.io').listen(server);
                                 });
                         //update server scores
                         }
-                    }
+                    }*/
                         
-                    socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
-                    delete userScores[socket.room];
+                    //socket.broadcast.to(socket.room).emit('leaveRoom', socket.username+' has left this room and room has been closed');
+                    socket.broadcast.to(socket.room).emit('generic',false, socket.username+' is reconnecting, please wait!');
+                    /*delete userScores[socket.room];
                     clients.forEach(function (socket_id) {
                         var username = getKeyByValue(usernamesList, socket_id);
                         usernamesList[username]["isPlaying"] = false;
                         io.sockets.sockets[socket_id].leave(socket.room);
-                    });
+                    });*/
                 }
-            });*/
+            });
                 //delete usernamesList[socket.username];
            }catch(err){
                
            }
         });
-        
         
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
