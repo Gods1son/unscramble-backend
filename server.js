@@ -524,10 +524,10 @@ var io = require('socket.io').listen(server);
             var info = {};
                     info.groupName = grp;
                     info.player1 = scr.player1;
-                    info.player1Score = player1score;
-                    info.player2 = player2;
-                    info.player2Score = player2score;
-                    info.player2Score = player2score;
+                    info.player1Score = scr.player1score;
+                    info.player2 = scr.player2;
+                    info.player2Score = scr.player2score;
+                    
                 }
             }catch(err){
                 
@@ -682,13 +682,32 @@ var io = require('socket.io').listen(server);
         })
         
         socket.on("reconnectUser", function(data){
-            
+            var username = data.user;
+            var room = data.room;
             try{
                console.log("reconnect");
-                if(usernamesList[data] != undefined){
-                    usernamesList[data]["id"] = socket.id;
-		    socket.username = data;
-                    socket.emit("rejoined", socket.id);
+                if(usernamesList[username] != undefined){
+                    usernamesList[username]["id"] = socket.id;
+                    socket.username = username;
+                    if(room != null){
+                        var prt = data.partner;
+                        var scr = userScores[room];
+                        if(scr != undefined){
+                            socket.join(room);
+                            socket.room = room;
+                            var info = {};
+                            info.groupName = grp;
+                            info.player1 = scr.player1;
+                            info.player1Score = scr.player1score;
+                            info.player2 = scr.player2;
+                            info.player2Score = scr.player2score;
+                            io.sockets.in(socket.room).emit('joinedGroup', info);
+                        }
+                        //socket.join(room);
+                    }else{
+                        socket.emit("rejoined", socket.id);
+                    }
+                    
                 } 
             }catch(err){
                 
@@ -697,10 +716,10 @@ var io = require('socket.io').listen(server);
 
         // when the user disconnects.. perform this
         socket.on('disconnect', function(){
-            console.log("discnonnected");
+            console.log("disconnected");
                 //delete user from userlist
            try{ 
-            io.of('/').in(socket.room).clients(function(error, clients) {
+            /*io.of('/').in(socket.room).clients(function(error, clients) {
                 if (clients.length > 0) {
                    // console.log('clients in the room: \n');
                    // console.log(clients);
@@ -736,12 +755,13 @@ var io = require('socket.io').listen(server);
                         io.sockets.sockets[socket_id].leave(socket.room);
                     });
                 }
-            });
+            });*/
                 //delete usernamesList[socket.username];
            }catch(err){
                
            }
         });
+        
         
         //send invitation rejection
         socket.on("rejectInvitation", function(data){
