@@ -687,6 +687,7 @@ var io = require('socket.io').listen(server);
                console.log("reconnect");
                 if(usernamesList[data] != undefined){
                     usernamesList[data]["id"] = socket.id;
+		    socket.username = data;
                     socket.emit("rejoined", socket.id);
                 } 
             }catch(err){
