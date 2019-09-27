@@ -310,6 +310,7 @@ var io = require('socket.io').listen(server);
                                  usernamesList[data] = obj; 
                                  socket.emit("loggedIn");
                             }else{
+				socket.username = data;
                                 usernamesList[data]["id"] = socket.id;
                                 socket.emit("loggedIn");
                             }
