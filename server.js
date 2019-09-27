@@ -762,6 +762,8 @@ var io = require('socket.io').listen(server);
                         usernamesList[username]["isPlaying"] = false;
                         io.sockets.sockets[socket_id].leave(socket.room);
                     });*/
+                }else{
+                   delete usernamesList[socket.username]; 
                 }
             });
                 //delete usernamesList[socket.username];
