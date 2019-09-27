@@ -312,6 +312,7 @@ var io = require('socket.io').listen(server);
                             }else{
 				socket.username = data;
                                 usernamesList[data]["id"] = socket.id;
+				usernamesList[data]["isPlaying"] = false;
                                 socket.emit("loggedIn");
                             }
                         }else{
