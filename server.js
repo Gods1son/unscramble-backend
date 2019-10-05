@@ -709,6 +709,7 @@ var io = require('socket.io').listen(server);
                             info.player2 = scr.player2;
                             info.player2Score = scr.player2score;
                             io.sockets.in(socket.room).emit('joinedGroup', info);
+			    socket.broadcast.to(socket.room).emit('generic',true, socket.username+' has reconnected');
                         }
                         //socket.join(room);
                     }else{
