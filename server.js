@@ -425,6 +425,81 @@ var io = require('socket.io').listen(server);
             }
         });
         
+         //create instructor led group
+        socket.on('createcoordinatorgroup', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+            try{
+                if(usernamesList[socket.username] == undefined){
+                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
+                        return;
+                    }
+                        var roomName = socket.username + "_cled";
+                         socket.room = roomName;
+                        socket.join(roomName);
+                        var currsocketId = usernamesList[socket.username]["id"];
+                        usernamesList[socket.username]["roomName"] = roomName;
+                        //usernamesList[username]["isPlaying"] = true;
+                        var obj = {};
+                        obj.coordinator = socket.username;
+                        userScores[roomName] = obj;
+                        io.to(currsocketId).emit("coordinatorLedCreated", socket.username);	
+            }catch(err){
+                
+            }
+        });
+        
+        //user leaves instructor led group
+        socket.on('leaveRoomCoord', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+            try{
+                        var roomName = socket.room;
+                        
+                //console.log("good1");
+                        //usernamesList[username]["isPlaying"] = false;
+                var group = userScores[socket.room]["users"];
+                //console.log("good");
+                var length = Object.keys(group).length - 1;
+               // console.log("good");
+                        delete userScores[socket.room]["users"][socket.username];
+                        io.sockets.in(socket.room).emit('memberleavesgroup',socket.username, length);
+                        socket.leave(roomName);
+                
+            }catch(err){
+                
+            }
+        });
+        
+        //join instructor led group
+        socket.on('joincoordinatorgroup', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+            try{
+                if(userScores[data] == undefined){
+                        socket.emit("generic", false, "Group not found");
+                        return;
+                    }
+                        var roomName = data;
+                         socket.room = roomName;
+                        socket.join(roomName);
+                        var currsocketId = usernamesList[socket.username]["id"];
+                        usernamesList[socket.username]["roomName"] = roomName;
+                        //usernamesList[username]["isPlaying"] = true;
+                        if(userScores[data]["users"] == undefined){
+                            userScores[data]["users"] = {};
+                        }
+                        var user = {};
+                        user[socket.username] = 0;
+                        //user.score = 0;
+                        userScores[data]["users"][socket.username] = 0;
+                        io.sockets.in(socket.room).emit('newmemberofgroup',true, userScores[data]["users"]);
+                        io.to(currsocketId).emit("prepareGame",userScores[data]["coordinator"], socket.username);	
+            }catch(err){
+                
+            }
+        });
+        
         //Accept friend invitation
         socket.on('acceptFriendInvitation', function (dataOr) {
              try{ 
@@ -625,6 +700,19 @@ var io = require('socket.io').listen(server);
             }
         })
         
+        //receive and send word
+        socket.on("sendWordCoord", function(data){
+            try{   
+                //SentWordCount(socket.username);
+                var user = socket.username;
+                var word = data.correct;
+                io.sockets.in(socket.room).emit('receiveWordCoord', data);
+                //io.to(socketId).emit("receiveWord", data);
+            }catch(err){
+                
+            }
+        })
+        
         //get all words
         socket.on("allSentWords", function(data){
             try{
@@ -678,6 +766,23 @@ var io = require('socket.io').listen(server);
             }
         })
         
+        //send report card
+        socket.on("markAnswerCoord", function (data){
+            try{
+                
+                console.log(data);
+                console.log(userScores[socket.room]["users"]);
+                console.log(userScores[socket.room]["users"][data]);
+                userScores[socket.room]["users"][data] += 1;
+                var send = userScores[socket.room]["users"];
+                io.sockets.in(socket.room).emit('newmemberofgroup',false, send, data);
+            }catch(err){
+                console.log("error");
+            }
+        })
+        
+        
+        
         //updates scores
         socket.on("updateScores", function (data){
             try{
@@ -724,7 +829,7 @@ var io = require('socket.io').listen(server);
 
         // when the user disconnects.. perform this
         socket.on('disconnect', function(){
-            console.log("disconnected");
+            //console.log("disconnected");
                 //delete user from userlist
            try{ 
             io.of('/').in(socket.room).clients(function(error, clients) {
