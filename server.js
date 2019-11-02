@@ -414,12 +414,16 @@ var io = require('socket.io').listen(server);
                         socket.emit("userCurrentlyPlaying", "User cannot be found online");
                         return;
                     }
-                        var roomName = socket.username + "Created";
+                        var roomName = socket.username + "_pair";
+                var currsocketId = usernamesList[socket.username]["id"];
+                if(usernamesList[socket.username]["roomName"] == roomName){
+                    io.to(currsocketId).emit("roomCreated", roomName);
+                    return;
+                } 
                          socket.room = roomName;
-                        socket.join(roomName);
-                        var currsocketId = usernamesList[socket.username]["id"];
+                        socket.join(roomName);            
                         usernamesList[socket.username]["roomName"] = roomName;
-                        io.to(currsocketId).emit("roomCreated", socket.username);	
+                        io.to(currsocketId).emit("roomCreated", roomName);	
             }catch(err){
                 
             }
@@ -430,20 +434,44 @@ var io = require('socket.io').listen(server);
             // we tell the client to execute 'updatechat' with 2 parameters
                     //var socketId = usernamesList[data]["id"];
             try{
-                if(usernamesList[socket.username] == undefined){
-                        socket.emit("userCurrentlyPlaying", "User cannot be found online");
-                        return;
-                    }
                         var roomName = socket.username + "_cled";
                          socket.room = roomName;
                         socket.join(roomName);
                         var currsocketId = usernamesList[socket.username]["id"];
                         usernamesList[socket.username]["roomName"] = roomName;
-                        //usernamesList[username]["isPlaying"] = true;
+                        usernamesList[socket.username]["isPlaying"] = true;
                         var obj = {};
                         obj.coordinator = socket.username;
                         userScores[roomName] = obj;
-                        io.to(currsocketId).emit("coordinatorLedCreated", socket.username);	
+                        io.to(currsocketId).emit("coordinatorLedCreated", roomName);	
+            }catch(err){
+                
+            }
+        });
+        
+        //create multiple player group
+        socket.on('createmultipleplayergroup', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+            try{
+                        var roomName = socket.username + "_mult";
+                         socket.room = roomName;
+                        socket.join(roomName);
+                        var currsocketId = usernamesList[socket.username]["id"];
+                        usernamesList[socket.username]["roomName"] = roomName;
+                        usernamesList[socket.username]["isPlaying"] = true;
+                        var obj = {};
+                        userScores[roomName] = obj;
+                
+                        if(userScores[roomName]["users"] == undefined){
+                            userScores[roomName]["users"] = {};
+                        }
+                        var user = {};
+                        user[socket.username] = 0;
+                        //user.score = 0;
+                        userScores[roomName]["users"][socket.username] = 0;
+                        //io.sockets.in(socket.room).emit('newmemberofgroup',true, userScores[roomName]["users"]);
+                        io.to(currsocketId).emit("multipleplayersCreated", roomName);	
             }catch(err){
                 
             }
@@ -457,7 +485,8 @@ var io = require('socket.io').listen(server);
                         var roomName = socket.room;
                         
                 //console.log("good1");
-                        //usernamesList[username]["isPlaying"] = false;
+                usernamesList[socket.username]["isPlaying"] = false;
+                delete usernamesList[socket.username]["roomName"];
                 var group = userScores[socket.room]["users"];
                 //console.log("good");
                 var length = Object.keys(group).length - 1;
@@ -485,7 +514,7 @@ var io = require('socket.io').listen(server);
                         socket.join(roomName);
                         var currsocketId = usernamesList[socket.username]["id"];
                         usernamesList[socket.username]["roomName"] = roomName;
-                        //usernamesList[username]["isPlaying"] = true;
+                        usernamesList[socket.username]["isPlaying"] = true;
                         if(userScores[data]["users"] == undefined){
                             userScores[data]["users"] = {};
                         }
@@ -493,8 +522,37 @@ var io = require('socket.io').listen(server);
                         user[socket.username] = 0;
                         //user.score = 0;
                         userScores[data]["users"][socket.username] = 0;
-                        io.sockets.in(socket.room).emit('newmemberofgroup',true, userScores[data]["users"]);
-                        io.to(currsocketId).emit("prepareGame",userScores[data]["coordinator"], socket.username);	
+                        io.sockets.in(socket.room).emit('newmemberofgroup',true, userScores[data]["users"], "new player joined game");
+                        io.to(currsocketId).emit("prepareGame",userScores[data]["coordinator"]);	
+            }catch(err){
+                
+            }
+        });
+        
+        //join multiplayer group
+        socket.on('joinmultiplayergroup', function (data) {
+            // we tell the client to execute 'updatechat' with 2 parameters
+                    //var socketId = usernamesList[data]["id"];
+            try{
+                if(userScores[data] == undefined){
+                        socket.emit("generic", false, "Group not found");
+                        return;
+                    }
+                        var roomName = data;
+                         socket.room = roomName;
+                        socket.join(roomName);
+                        var currsocketId = usernamesList[socket.username]["id"];
+                        usernamesList[socket.username]["roomName"] = roomName;
+                        usernamesList[socket.username]["isPlaying"] = true;
+                        if(userScores[data]["users"] == undefined){
+                            userScores[data]["users"] = {};
+                        }
+                        var user = {};
+                        user[socket.username] = 0;
+                        //user.score = 0;
+                        userScores[data]["users"][socket.username] = 0;
+                        io.sockets.in(socket.room).emit('newmemberofgroup',true, userScores[data]["users"], "new player joined game");
+                        io.to(currsocketId).emit("prepareGame",null);	
             }catch(err){
                 
             }
@@ -505,7 +563,7 @@ var io = require('socket.io').listen(server);
              try{ 
                 //join users
                 var info = {};
-                if(dataOr.indexOf("Created") == -1){
+                if(dataOr.indexOf("_pair") == -1){
                 if(usernamesList[socket.username] != undefined){
                     var socketId = usernamesList[socket.username]["id"];
                             io.to(socketId).emit("userCurrentlyPlaying", "Group cannot be found");
@@ -513,7 +571,7 @@ var io = require('socket.io').listen(server);
                       }
                 }
 
-                var data = dataOr.replace("Created","");
+                var data = dataOr.replace("_pair","");
                 if(usernamesList[data] != undefined){
                     if(usernamesList[data]["roomName"] == undefined){
                         var socketId = usernamesList[socket.username]["id"];
@@ -713,6 +771,19 @@ var io = require('socket.io').listen(server);
             }
         })
         
+        //receive and send word
+        socket.on("sendWordMultiple", function(data){
+            try{   
+                //SentWordCount(socket.username);
+                var user = socket.username;
+                var word = data.correct;
+                io.sockets.in(socket.room).emit('receiveWordMultiple', data);
+                //io.to(socketId).emit("receiveWord", data);
+            }catch(err){
+                
+            }
+        })
+        
         //get all words
         socket.on("allSentWords", function(data){
             try{
@@ -769,10 +840,6 @@ var io = require('socket.io').listen(server);
         //send report card
         socket.on("markAnswerCoord", function (data){
             try{
-                
-                console.log(data);
-                console.log(userScores[socket.room]["users"]);
-                console.log(userScores[socket.room]["users"][data]);
                 userScores[socket.room]["users"][data] += 1;
                 var send = userScores[socket.room]["users"];
                 io.sockets.in(socket.room).emit('newmemberofgroup',false, send, data);
@@ -781,7 +848,16 @@ var io = require('socket.io').listen(server);
             }
         })
         
-        
+        //send report card
+        socket.on("markAnswerAllMiss", function (data){
+            try{
+                userScores[socket.room]["users"][data] += 1;
+                var send = userScores[socket.room]["users"];
+                io.sockets.in(socket.room).emit('newmemberofgroup',true, send, "");
+            }catch(err){
+                console.log("error");
+            }
+        })
         
         //updates scores
         socket.on("updateScores", function (data){
@@ -957,6 +1033,7 @@ var io = require('socket.io').listen(server);
                     clients.forEach(function (socket_id) {
                         var username = getKeyByValue(usernamesList, socket_id);
                         usernamesList[username]["isPlaying"] = false;
+                        delete usernamesList[username]["roomName"];
                         io.sockets.sockets[socket_id].leave(socket.room);
                     });
                 }
