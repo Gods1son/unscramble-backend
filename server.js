@@ -777,6 +777,18 @@ var io = require('socket.io').listen(server);
                 //SentWordCount(socket.username);
                 var user = socket.username;
                 var word = data.correct;
+                 var url = "http://www.plsanswer.com/Unscramble/testSave.php?type=saveWord&username=" + user + "&word=" + word;
+                        http.get(url, function(response) {
+                            // Continuously update stream with data
+                            var body = '';
+                            response.on('data', function(d) {
+                                body += d;
+                            });
+                            response.on('end', function() {
+                                //console.log(body);
+
+                            });
+                        });
                 io.sockets.in(socket.room).emit('receiveWordMultiple', data);
                 //io.to(socketId).emit("receiveWord", data);
             }catch(err){
